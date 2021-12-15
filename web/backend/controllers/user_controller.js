@@ -1,12 +1,13 @@
-const UserModel = require('../models/user_model')
+const UserService = require('../services/user_service')
 const Session = require('../entities/session')
+const User = require('../entities/user')
 const { getRequestBody } = require('../utils/util')
 const md5 = require('md5')
 
 class UserController {
 
     constructor() {
-        this.userModel = new UserModel()
+        this.userService = new UserService()
     }
 
     async signUpGet(client) {
@@ -38,18 +39,10 @@ class UserController {
             // Registration
             const { req, res } = client
             const body = await getRequestBody(req)
-            
-            // todo add data validation
-
-            const user = {
-                'firstName': body.firstName,
-                'lastName': body.lastName,
-                'username': body.username,
-                'password': md5(body.password)
-            }
-            
-            await this.userModel.save(user)
-            await Session.start(client, {'username': user.username, 'startTime': new Date()})
+            const { firstName, lastName, username, password } = body
+            const user = new User(firstName, lastName, username, md5(password))
+            const userId = await this.userService.save(user)
+            await Session.start(client, {userId, 'startTime': new Date()})
             client.sendCookie()
             console.log('Signup: Session have been created')
 
@@ -66,12 +59,12 @@ class UserController {
             const { req, res } = client
             const body = await getRequestBody(req)
             
-            const user = await this.userModel.findUserByUsername(body.username)
+            const user = await this.userService.findByUsername(body.username)
             console.log('UserController: user:')
             console.log(user)
             if (user) {
                 if (user.password === md5(body.password)) {
-                    await Session.start(client, {'username': user.username, 'startTime': new Date()})
+                    await Session.start(client, {'userId': user.id, 'startTime': new Date()})
                     client.sendCookie()
                     res.writeHead(302, {Location: '/'})
                     return 

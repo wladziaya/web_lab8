@@ -1,26 +1,22 @@
 const mysql = require('mysql2/promise')
 const { db } = require('../config')
 
-class UserModel {
-
-    constructor() {
-        this.storage = []
-    }
+class UserRepository {
 
     async save(user) {
         try {
             const { username, password, firstName, lastName } = user
             const sql = 'INSERT INTO user VALUES (NULL, ?, ?, ?, ?)'
             const conn = await mysql.createConnection(db)
-            await conn.query(sql, [username, password, firstName, lastName])
+            const [rows] = await conn.query(sql, [username, password, firstName, lastName])
             await conn.end()
-            return true
+            return rows.insertId
         } catch (error) {
             throw new Error(error)
         }
     }
 
-    async findUserByUsername(username) {
+    async findByUsername(username) {
         try {
             const sql = 'SELECT * FROM user WHERE username = ?'
             const conn = await mysql.createConnection(db)
@@ -33,4 +29,4 @@ class UserModel {
     }
 }
 
-module.exports = UserModel
+module.exports = UserRepository
