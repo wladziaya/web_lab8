@@ -1,7 +1,11 @@
 const UserService = require('../services/user_service')
-const Session = require('../entities/session')
+
 const User = require('../entities/user')
+
+const Session = require('../entities/session')
+
 const { getRequestBody } = require('../utils/util')
+
 const md5 = require('md5')
 
 class UserController {
@@ -41,8 +45,8 @@ class UserController {
             const body = await getRequestBody(req)
             const { firstName, lastName, username, password } = body
             const user = new User(firstName, lastName, username, md5(password))
-            const userId = await this.userService.save(user)
-            await Session.start(client, {userId, 'startTime': new Date()})
+            const userId = await this.userService.create(user)
+            await Session.start(client, {'user_id': userId, 'start_time': new Date()})
             client.sendCookie()
             console.log('Signup: Session have been created')
 
@@ -64,7 +68,7 @@ class UserController {
             console.log(user)
             if (user) {
                 if (user.password === md5(body.password)) {
-                    await Session.start(client, {'userId': user.id, 'startTime': new Date()})
+                    await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
                     client.sendCookie()
                     res.writeHead(302, {Location: '/'})
                     return 
@@ -89,7 +93,8 @@ class UserController {
         }
     }
 
-    async signOutPost(client) {
+    // DELETE
+    async signOut(client) {
         const { res } = client
         await Session.delete(client)
         client.sendCookie()

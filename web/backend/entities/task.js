@@ -1,10 +1,12 @@
 class Task {
 
-    constructor(title, url, datatime, repeat) {
+    constructor(id, title, url, datetime, userId, statusId) {
+        this.id = id
         this.title = title
         this.url = url
-        this.datatime = datatime
-        this.repeat = repeat
+        this.dttm = datetime
+        this.userId = userId
+        this.statusId = statusId
     }
 
 }

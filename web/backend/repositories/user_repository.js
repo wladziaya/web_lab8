@@ -3,7 +3,7 @@ const { db } = require('../config')
 
 class UserRepository {
 
-    async save(user) {
+    async create(user) {
         try {
             const { username, password, firstName, lastName } = user
             const sql = 'INSERT INTO user VALUES (NULL, ?, ?, ?, ?)'

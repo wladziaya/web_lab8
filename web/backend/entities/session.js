@@ -15,7 +15,7 @@ class Session {
         if (client.sessionID) return client.sessionID
         const token = generateToken()
         this.inMemoryStorage.set(token, data)
-        await Session.save(token, data.userId, data.startTime)
+        await Session.save(token, data['user_id'], data['start_time'])
         client.sessionID = token
         console.log(`Start: ${client.sessionID}`)
         client.setCookie('session', token)
@@ -47,6 +47,15 @@ class Session {
         } catch (error) {
             throw new Error(error)
         }
+    }
+
+    static async get(client) {
+        const sessionID = client.sessionID
+        if (sessionID) {
+            const res = this.inMemoryStorage.get(sessionID) ?? await storage.get(sessionID)
+            return res
+        } 
+        return
     }
 
     static async delete(client) {

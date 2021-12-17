@@ -5,7 +5,7 @@ class SessionRepository {
 
     async get(token) {
         try {
-            const sql = 'SELECT id FROM session WHERE id = ?'
+            const sql = 'SELECT * FROM session WHERE id = ?'
             const conn = await mysql.createConnection(db)
             const [rows] = await conn.query(sql, [token])
             await conn.end()

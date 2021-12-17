@@ -1,8 +1,9 @@
 class Repeat {
 
-    constructor(delta, title) {
+    constructor(delta, title, taskId) {
         this.delta = delta
         this.title = title
+        this.taskId = taskId
     }
 }
 

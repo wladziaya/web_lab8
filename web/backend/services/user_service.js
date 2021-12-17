@@ -4,17 +4,22 @@ const UserRepository = require('../repositories/user_repository')
 class UserService {
 
     constructor() {
-        this.userModel = new UserRepository()
+        this.userRepository = new UserRepository()
     }
 
-    async save(user) {
+    async create(user) {
         // todo add data validation
-        return await this.userModel.save(user)
+        return await this.userRepository.create(user)
     }
 
     async findByUsername(username) {
-        const data = await this.userModel.findByUsername(username)
-        return new User(data['first_name'], data['last_name'], data['username'], data['password'], data['id'])
+        try {
+            const data = await this.userRepository.findByUsername(username)
+            return new User(data['first_name'], data['last_name'], data['username'], data['password'], data['id'])
+        } catch (error) {
+            if (error instanceof TypeError) return
+            throw new Error(error)
+        }
     }
 
 }
