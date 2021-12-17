@@ -3,10 +3,13 @@ const UserService = require('../services/user_service')
 const User = require('../entities/user')
 
 const Session = require('../entities/session')
+const Logger = require('../utils/logger')
 
 const { getRequestBody } = require('../utils/util')
 
 const md5 = require('md5')
+
+const logger = new Logger('./logs/main_log.txt', __filename)
 
 class UserController {
 
@@ -18,11 +21,10 @@ class UserController {
         try {
             // Registration
             const { res } = client
-
             res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
             return '<h2>Registration page with forms</h2>'
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
@@ -30,11 +32,10 @@ class UserController {
         try {
             // Login
             const { res } = client
-
             res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
             return '<h2>Login page with forms</h2>'
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
@@ -48,12 +49,11 @@ class UserController {
             const userId = await this.userService.create(user)
             await Session.start(client, {'user_id': userId, 'start_time': new Date()})
             client.sendCookie()
-            console.log('Signup: Session have been created')
-
+            await logger.info('Signup: Session have been created')
             res.writeHead(302, {Location: '/'})
             return 
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
@@ -64,8 +64,6 @@ class UserController {
             const body = await getRequestBody(req)
             
             const user = await this.userService.findByUsername(body.username)
-            console.log('UserController: user:')
-            console.log(user)
             if (user) {
                 if (user.password === md5(body.password)) {
                     await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
@@ -89,17 +87,21 @@ class UserController {
                 }
             }
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
     // DELETE
     async signOut(client) {
-        const { res } = client
-        await Session.delete(client)
-        client.sendCookie()
-        res.writeHead(302, {Location: '/users/signin'})
-        return
+        try {
+            const { res } = client
+            await Session.delete(client)
+            client.sendCookie()
+            res.writeHead(302, {Location: '/users/signin'})
+            return
+        } catch (error) {
+            await logger.error(error.message)
+        }
     }
 }
 
