@@ -1,15 +1,14 @@
 const http = require('http')
-const UserController = require('./controllers/user_controller')
 const Client = require('./entities/client')
 const Session = require('./entities/session')
+const UserController = require('./controllers/user_controller')
+const TaskController = require('./controllers/task_controller')
 
 const userController = new UserController()
+const taskController = new TaskController()
 
 const hostname = '127.0.0.1'
 const port = 8000
-
-// Test stuff
-const users = [{name: 'Jack', lastname: 'Daniels', age: '40'}]
 
 const routing = {
     'GET': {
@@ -17,14 +16,21 @@ const routing = {
             client.res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
             return '<h1>Main page</h1>'
         },
-        '/users': async (client) => users,
         '/users/signin': async (client) => userController.signInGet(client),
-        '/users/signup': async (client) => userController.signUpGet(client)
+        '/users/signup': async (client) => userController.signUpGet(client),
+        '/tasks': async (client) => taskController.findAll(client)
     },
     'POST': {
         '/users/signin': async (client) => userController.signInPost(client),
         '/users/signup': async (client) => userController.signUpPost(client),
-        '/users/signout': async (client) => userController.signOutPost(client) 
+        '/tasks': async (client) => taskController.create(client) 
+    },
+    'PUT': {
+        '/tasks': async (client) => taskController.update(client)
+    },
+    'DELETE': {
+        '/users/signout': async (client) => userController.signOut(client),
+        '/tasks': async (client) => taskController.delete(client)
     }
 }
 

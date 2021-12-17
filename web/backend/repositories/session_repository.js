@@ -1,11 +1,11 @@
 const mysql = require('mysql2/promise')
 const { db } = require('../config')
 
-class SessionModel {
+class SessionRepository {
 
     async get(token) {
         try {
-            const sql = 'SELECT id FROM session WHERE id = ?'
+            const sql = 'SELECT * FROM session WHERE id = ?'
             const conn = await mysql.createConnection(db)
             const [rows] = await conn.query(sql, [token])
             await conn.end()
@@ -17,10 +17,10 @@ class SessionModel {
 
     async save(session) {
         try {
-            const { token, username, startTime } = session
+            const { token, userId, startTime } = session
             const sql = 'INSERT INTO session VALUES (?, ?, ?)'
             const conn = await mysql.createConnection(db)
-            await conn.query(sql, [token, username, startTime])
+            await conn.query(sql, [token, userId, startTime])
             await conn.end()
             return true
         } catch (error) {
@@ -41,4 +41,4 @@ class SessionModel {
     }
 }
 
-module.exports = SessionModel
+module.exports = SessionRepository

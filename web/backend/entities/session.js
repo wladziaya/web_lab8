@@ -1,7 +1,7 @@
-const SessionModel = require('../models/session_model')
+const SessionRepository = require('../repositories/session_repository')
 const { generateToken } = require('../utils/util')
 
-const storage = new SessionModel()
+const storage = new SessionRepository()
 
 class Session {
 
@@ -15,7 +15,7 @@ class Session {
         if (client.sessionID) return client.sessionID
         const token = generateToken()
         this.inMemoryStorage.set(token, data)
-        await Session.save(token, data.username, data.startTime)
+        await Session.save(token, data['user_id'], data['start_time'])
         client.sessionID = token
         console.log(`Start: ${client.sessionID}`)
         client.setCookie('session', token)
@@ -49,6 +49,15 @@ class Session {
         }
     }
 
+    static async get(client) {
+        const sessionID = client.sessionID
+        if (sessionID) {
+            const res = this.inMemoryStorage.get(sessionID) ?? await storage.get(sessionID)
+            return res
+        } 
+        return
+    }
+
     static async delete(client) {
         try {
             const { sessionID } = client
@@ -64,9 +73,9 @@ class Session {
         }
     }
 
-    static async save(token, username, startTime) {
+    static async save(token, userId, startTime) {
         try {
-            await storage.save({token, username, startTime})
+            await storage.save({token, userId, startTime})
         } catch (error) {
             throw new Error(error)
         }
