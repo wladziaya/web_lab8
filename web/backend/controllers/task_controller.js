@@ -7,8 +7,11 @@ const Repeat = require('../entities/repeat')
 const Platform = require('../entities/platform')
 
 const Session = require('../entities/session')
+const Logger = require('../utils/logger')
 
 const { getRequestBody } = require('../utils/util')
+
+const logger = new Logger('./logs/main_log.txt', __filename)
 
 class TaskController {
 
@@ -26,31 +29,22 @@ class TaskController {
             const { title, url, dttm, delta, repeatTitle, platformTitle } = body
             const session = await Session.get(client)
     
-            console.log(`[ TaskController ] - create: session`)
-            console.log(session)
-    
-            // todo consider having session check
-            if (!session) {
-                res.writeHead(200, {'Content-Type': 'application/json'})
-                return {'error': {'code': 400}}
-            }
-    
             const task = new Task(undefined, title, url, dttm, session['user_id'], 0)
             const taskId = await this.taskService.create(task)
-            console.log('[ TaskController ] - create: Task created')
+            await logger.debug('Create: Task created')
     
             const repeat = new Repeat(delta, repeatTitle, taskId)
             await this.repeatService.create(repeat)
-            console.log('[ TaskController ] - create: Repeat created')
+            await logger.debug('Create: Repeat created')
     
             const platform = new Platform(platformTitle, taskId)
             await this.platformService.create(platform)
-            console.log('[ TaskController ] - create: Platform created')
+            await logger.debug('Create: Platform created')
            
             res.writeHead(200, {'Content-Type': 'application/json'})
             return {taskId}
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
@@ -60,9 +54,11 @@ class TaskController {
             const { res } = client
             const session = await Session.get(client)
             res.writeHead(200, {'Content-Type': 'application/json'})    
-            return await this.taskService.findAll(session['user_id'])
+            const result = await this.taskService.findAll(session['user_id'])
+            await logger.debug(`FindAll: ${result.length} Tasks found`)
+            return result
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
@@ -76,7 +72,8 @@ class TaskController {
     
             const task = new Task(taskId, title, url, dttm, session['user_id'], 0)
             const successUpdate = await this.taskService.update(task)
-    
+            await logger.debug(`Update: successUpdate=${successUpdate}`)
+
             if (!successUpdate) {
                 res.writeHead(200, {'Content-Type': 'application/json'})
                 return {'error': {'code': 400, 'message': 'Can`t update task: task doesn`t exist or you don`t have rights to update it'}}
@@ -91,7 +88,7 @@ class TaskController {
             res.writeHead(200, {'Content-Type': 'application/json'})
             return {taskId}
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
@@ -102,14 +99,17 @@ class TaskController {
             const body = await getRequestBody(req)
             const session = await Session.get(client)
             const successDelete = await this.taskService.delete(session['user_id'], body.taskId)
+            await logger.debug(`Delete: successDelete=${successDelete}`)
+
             if (!successDelete) {
                 res.writeHead(200, {'Content-Type': 'application/json'})
                 return {'error': {'code': 400, 'message': 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it'}}
             }
+
             res.writeHead(200, {'Content-Type': 'application/json'})
             return {'taskId': body.taskId}
         } catch (error) {
-            console.log(error)
+            await logger.error(error.message)
         }
     }
 
