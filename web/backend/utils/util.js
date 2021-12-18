@@ -1,3 +1,5 @@
+const qs = require('querystring')
+
 const parseCookies = (cookie = '') =>
     cookie
         .split(';')
@@ -14,11 +16,11 @@ function getRequestBody(req) {
         try {
             const chunks = []
         
-            // Consider using querystring module
             req.on('data', chunk => chunks.push(chunk))
         
             req.on('end', () => {
-                const buffer = Buffer.concat(chunks)
+                const buffer = Buffer.concat(chunks).toString()
+                if (buffer.length === 0) {resolve(null); return}
                 resolve(JSON.parse(buffer))
             })
     

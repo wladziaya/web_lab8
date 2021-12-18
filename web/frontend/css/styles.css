@@ -1,0 +1,86 @@
+body {
+    font-family: Georgia, serif;
+    background: #046c72;
+    margin: 0;
+    /* overflow: hidden; */
+}
+
+header {
+    padding: 4vh;
+    text-align: center;
+    background: #043d40;
+    color: #b2eff2;
+    /* background: #b2eff2;
+    color: #046c72; */
+    font-size: 30px;
+}
+
+footer {
+    padding: 2vh;
+    background: #043d40;
+    color: #b2eff2;
+    text-align: end;
+
+}
+
+.athors {
+    margin-top: 10px;
+}
+
+#signForm a {
+    color: #b2eff2;
+}
+
+#signForm p {
+    color: #fff;
+}
+
+#signForm button {
+    width: 50%;
+    background-color: #b2eff2;
+    border: 1px solid #b2eff2;
+    color: #046c72;
+}
+
+#signForm button:hover {
+    opacity: 0.8;
+}
+
+#signForm {
+    margin: 0 auto;
+    align-items: center;
+    display: flex;
+    height: 77.5vh;
+    width: 60vw;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#signForm input {
+    width: 100%;
+    background-color: #11939A;
+    border: 1px solid #11939A;
+    color: rgb(76, 76, 76);
+
+}
+
+#signForm button,
+#signForm input {
+    max-width: 480px;
+    margin: 15px;
+    outline: none;
+    line-height: 1.5rem;
+    padding: 16px;
+    border-radius: 15px;
+    font-family: inherit;
+    font-size: 20px;
+}
+
+#signForm input::-moz-placeholder {
+    color: rgb(76, 76, 76);
+}
+
+#signForm input::-webkit-input-placeholder {
+    color: rgb(76, 76, 76);
+}

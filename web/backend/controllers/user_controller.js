@@ -8,6 +8,7 @@ const Logger = require('../utils/logger')
 const { getRequestBody } = require('../utils/util')
 
 const md5 = require('md5')
+const fsp = require('fs/promises')
 
 const logger = new Logger('./logs/main_log.txt', __filename)
 
@@ -22,7 +23,8 @@ class UserController {
             // Registration
             const { res } = client
             res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
-            return '<h2>Registration page with forms</h2>'
+            const result = await fsp.readFile('../frontend/html/signup.html', {encoding: 'utf-8'})
+            return result
         } catch (error) {
             await logger.error(error.message)
         }
@@ -33,7 +35,8 @@ class UserController {
             // Login
             const { res } = client
             res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
-            return '<h2>Login page with forms</h2>'
+            const result = await fsp.readFile('../frontend/html/signin.html', {encoding: 'utf-8'})
+            return result
         } catch (error) {
             await logger.error(error.message)
         }
@@ -44,6 +47,14 @@ class UserController {
             // Registration
             const { req, res } = client
             const body = await getRequestBody(req)
+
+            if(!body) {
+                await logger.debug('SignUpPost: recieved request body is empty')
+                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
+                return {error: {code: 400, message: 'Get no JSON data from POST request'}}
+            }
+            await logger.debug('SignUpPost: recieved request body contains data')
+
             const { firstName, lastName, username, password } = body
             const user = new User(firstName, lastName, username, md5(password))
             const userId = await this.userService.create(user)
@@ -51,7 +62,7 @@ class UserController {
             client.sendCookie()
             await logger.info('Signup: Session have been created')
             res.writeHead(302, {Location: '/'})
-            return 
+            return
         } catch (error) {
             await logger.error(error.message)
         }
@@ -62,7 +73,14 @@ class UserController {
             // Login
             const { req, res } = client
             const body = await getRequestBody(req)
-            
+
+            if(!body) {
+                await logger.debug('SignInPost: recieved request body is empty')
+                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
+                return {error: {code: 400, message: 'Get no JSON data from POST request'}}
+            }
+            await logger.debug('SignInPost: recieved request body contains data')
+
             const user = await this.userService.findByUsername(body.username)
             if (user) {
                 if (user.password === md5(body.password)) {
