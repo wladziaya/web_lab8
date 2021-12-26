@@ -6,24 +6,53 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fake Student</title>
-    <link href="../frontend/css/styles.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
     <header>
-        <div style="text-align: start;">Hello, motherfucker <button id='signout' onclick="signOut()">Sign out</button>
+        <div style="text-align: start;">Hello, motherfucker <button id='signout' onclick="sigOut()">Sign out</button>
         </div>
     </header>
     <main>
         <div id=tasks>
             <div style="height: 80%; width: 80%; background-color: #043d40; overflow-y: scroll; min-width: 300px;">
-                <div id='taskslist'>
-                    <div class="tasklist">Task1</div>
-                    <div class="tasklist">Task2</div>
-                </div>
                 <div><button id="addbutton" onclick="
                     document.getElementById('addtask').style.display='grid'">Addtask
                     </button></div>
+                <div id='taskslist'>
+                    <!-- <div class="tasklist">Task1
+                        <div>
+                            <button id='updateBut'
+                                onclick="document.getElementById('edittask').style.display='grid'">edit</button>
+                            <button id='updateBut'>delete</button>
+                        </div>
+                    </div> -->
+                </div>
+
+            </div>
+
+            <div id='edittask'>
+                <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
+                        onclick="document.getElementById('edittask').style.display='none'">×</button>
+                </div>
+                <div>
+                    <input id="etext" type="text" required>
+                    <input id="eurl" type="url" required>
+                    <label>Datetime</label>
+                    <input id="edttm" type="datetime-local" required>
+                    <label>How often</label>
+                    <select id="ehowoften" required>
+                        <option value='1'>Every day</option>
+                        <option value='7'>Every week</option>
+                        <option value='14'>Every two weeks</option>
+                    </select>
+                    <label>Conferencing platform</label>
+                    <select id='eplatform' required>
+                        <option value='bbb'>BBB</option>
+                    </select>
+                    <button type="submit" onclick="editTask()">Edit</button>
+                </div>
             </div>
 
             <div id='addtask'>
@@ -55,20 +84,31 @@
         <div class="athors">Bogdan Chernykh, Vlada Yaremenko, Alexey Gryshyn</div>
     </footer>
     <script>
-        (async () => {
+        let getAllTasks = async () => {
             const response = await fetch('http://localhost:8000/tasks', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json;charset=utf-8'
-                    },
-            })
-            const data = await response.json()
-            data.forEach(task => {
-                divtask = `<div class="tasklist">${task.title}</div>`
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+            });
+            let tasksArray = await response.json()
+            tasksArray.forEach(task => {
+                divtask = `<div class="tasklist">${task.title}
+                    <span>${task.url}</span>
+                    <span>${task.dttm}</span>
+                    <span>${task.repeatTitle}</span>
+                    <span>${task.platformTitle}</span>
+                        <div>
+                            <button id='updateBut' value=${task.id} onclick="document.getElementById('edittask').style.display='grid'">edit</button>
+                            <button id='updateBut' value=${task.id} onclick="deleteTask(this.value)">delete</button>
+                        </div>
+                        </div>`
                 document.getElementById('taskslist').innerHTML += divtask
-            })
-        })()
 
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", getAllTasks);
 
         let username = "username"
         // document.getElementsByTagName('header')[0].innerHTML = `Hello, ${username}`;
@@ -93,15 +133,60 @@
                     body: JSON.stringify(newTask)
                 });
                 const data = await response.json()
-                document.getElementById('addtask').style.display='none'
+                document.getElementById('addtask').style.display = 'none'
                 let task = document.createElement('div');
                 task.className = 'tasklist'
                 task.id = data.id
                 task.innerHTML = newTask.title;
                 let firstTask = document.getElementById('taskslist').firstChild
                 document.getElementById('taskslist').insertBefore(task, firstTask)
+                document.getElementById("text").value = ''
+                document.getElementById("url").value = ''
+                document.getElementById("dttm").value = ''
                 console.log('data', data);
                 console.log(response)
+            }
+        }
+
+        let editTask = async (id) => {
+            let editedTask = {
+                "id": id,
+                "title": document.getElementById("etext").value,
+                "url": document.getElementById("eurl").value,
+                "dttm": document.getElementById("edttm").value,
+                "delta": document.getElementById("ehowoften").value,
+                "repeatTitle": document.getElementById('ehowoften').selectedOptions[0].text,
+                "platformTitle": document.getElementById("eplatform").value
+            }
+
+            if (editedTask.title && editedTask.url && editedTask.dttm && editedTask.delta && editedTask.repeatTitle && editedTask.platformTitle) {
+
+                const response = await fetch('http://localhost:8000/tasks', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(editedTask)
+                });
+                const data = await response.json()
+            }
+        }
+
+         let deleteTask = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/users/signout', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8',
+                    },
+                    body: JSON.stringify(id)
+                })
+                console.log('done')
+            } catch (error) {
+                console.log(error)
+            } finally {
+                // Actually must be in try block
+                location.reload()
             }
         }
 
