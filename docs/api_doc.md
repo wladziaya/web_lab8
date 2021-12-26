@@ -153,7 +153,7 @@ Response 200 with json
 ### PUT `/tasks` - updates Task data
 Expected request body:
 ```json
-    {
+{
     "taskId": 2,
     "title": "Brand New Update",
     "url": "https://www.changed.com/no-test",
