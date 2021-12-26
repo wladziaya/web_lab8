@@ -62,7 +62,7 @@ label {
 }
 
 
-#signForm input, #addtask input, select {
+#signForm input, #addtask input, select,  #edittask input  {
     width: 100%;
     background-color: #11939A;
     border: 1px solid #11939A;
@@ -80,7 +80,7 @@ label {
 
 }
 
-#addtask {
+#addtask, #edittask {
     background: #043d40; position: absolute; height: fit-content; width: 48vw; border: 2px solid #11939a;
     border-radius: 2em;
     min-width: 300px;
@@ -98,7 +98,7 @@ label {
     color: #d8f9fb;
 }
 
-#addtask input, select{
+#addtask input, select,  #edittask input{
     max-width: 480px;
     margin: 15px;
     outline: none;
@@ -113,7 +113,7 @@ label {
 
 #signForm button,
 #signForm input, 
- #addtask button, #addbutton, #signout {
+ #addtask button, #addbutton, #signout, #edittask button {
     max-width: 480px;
     margin: 15px;
     outline: none;
@@ -148,11 +148,13 @@ label {
     color: rgb(76, 76, 76);
 }
 
-#addtask input::-moz-placeholder {
+#addtask input::-moz-placeholder,
+#edittask input::-moz-placeholder {
     color: rgb(76, 76, 76);
 }
 
-#addtask input::-webkit-input-placeholder {
+#addtask input::-webkit-input-placeholder,
+#edittask input::-webkit-input-placeholder {
     color: rgb(76, 76, 76);
 }
 
