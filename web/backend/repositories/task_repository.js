@@ -23,7 +23,7 @@ class TaskRepository {
                 FROM test.task AS t
                 INNER JOIN \`repeat\` AS r ON t.id = r.task_id
                 INNER JOIN \`platform\` AS p ON t.id = p.task_id
-                WHERE user_id = 1;
+                WHERE user_id = ?;
             `
             const conn = await mysql.createConnection(db)
             const [rows] = await conn.query(sql, [userId])
