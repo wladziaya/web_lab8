@@ -6,12 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fake Student</title>
-    <link href="styles.css" rel="stylesheet">
+    <!-- Don`t forget to change path :) -->
+    <link href="../frontend/css/styles.css" rel="stylesheet">
 </head>
 
 <body>
     <header>
-        <div style="text-align: start;">Hello, motherfucker <button id='signout' onclick="sigOut()">Sign out</button>
+        <div style="text-align: start;">Hello, motherfucker <button id='signout' onclick="signOut()">Sign out</button>
         </div>
     </header>
     <main>
@@ -172,21 +173,21 @@
             }
         }
 
-         let deleteTask = async () => {
+         let deleteTask = async (id) => {
             try {
-                const response = await fetch('http://localhost:8000/users/signout', {
+                const response = await fetch('http://localhost:8000/tasks', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
                     },
-                    body: JSON.stringify(id)
+                    body: JSON.stringify({taskId: id})
                 })
                 console.log('done')
             } catch (error) {
                 console.log(error)
             } finally {
                 // Actually must be in try block
-                location.reload()
+                // location.reload()
             }
         }
 
@@ -194,6 +195,10 @@
             try {
                 const response = await fetch('http://localhost:8000/users/signout', {
                     method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8',
+                    },
+                    body: JSON.stringify({test: 'parasha'})
                 })
                 console.log('done')
             } catch (error) {
