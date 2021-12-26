@@ -104,8 +104,7 @@ const server = http.createServer(async (req, res) => {
         await logger.debug(`hadler: ${handler}`)
 
         if (!handler) {
-            res.statusCode = 404
-            res.end('Not Found 404')
+            res.end(await assetsController.getNotFoundPage(client))
         }
 
         const patchedHandler = securityPatch(handler)
