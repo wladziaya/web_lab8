@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fake Student</title>
-    <!-- Don`t forget to change path :) -->
     <link href="../frontend/css/styles.css" rel="stylesheet">
 </head>
 
@@ -23,30 +22,51 @@
                     </button></div>
                 <div id='taskslist'>
                     <!-- <div class="tasklist">Task1
+                        <div id='allinfo'>
+                            <div>${task.url}</div>
+                            <div>${task.dttm}</div>
+                            <div>${task.repeatTitle}</div>
+                            <div>${task.platformTitle}</div>
+                        </div>
                         <div>
                             <button id='updateBut'
-                                onclick="document.getElementById('edittask').style.display='grid'">edit</button>
-                            <button id='updateBut'>delete</button>
+                             onclick="document.getElementById('edittask').style.display='grid'"
+                                >edit</button>
+                            <button id='updateBut' onclick="deleteTask(this)">delete</button>
+                        </div>
+                    </div>
+                    <div class="tasklist">Task1
+                        <div class='allinfo'>
+                            <div>${task.url}</div>
+                            <div>${task.dttm}</div>
+                            <div>${task.repeatTitle}</div>
+                            <div>${task.platformTitle}</div>
+                        </div>
+                        <div>
+                            <button id='updateBut'
+                             onclick="console.log(this.closest('.allinfo'))"
+                                >edit</button>
+                            <button id='updateBut' onclick="deleteTask(this)">delete</button>
                         </div>
                     </div> -->
                 </div>
 
             </div>
 
-            <div id='edittask'>
+            <!-- <div id='edittask'>
                 <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
                         onclick="document.getElementById('edittask').style.display='none'">×</button>
                 </div>
                 <div>
-                    <input id="etext" type="text" required>
+                    <input id="etext" value='7777' type="text" required>
                     <input id="eurl" type="url" required>
                     <label>Datetime</label>
                     <input id="edttm" type="datetime-local" required>
                     <label>How often</label>
-                    <select id="ehowoften" required>
+                    <select id="ehowoften" value='7' required>
                         <option value='1'>Every day</option>
                         <option value='7'>Every week</option>
-                        <option value='14'>Every two weeks</option>
+                        <option  value='14'>Every two weeks</option>
                     </select>
                     <label>Conferencing platform</label>
                     <select id='eplatform' required>
@@ -54,7 +74,7 @@
                     </select>
                     <button type="submit" onclick="editTask()">Edit</button>
                 </div>
-            </div>
+            </div> -->
 
             <div id='addtask'>
                 <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
@@ -85,6 +105,36 @@
         <div class="athors">Bogdan Chernykh, Vlada Yaremenko, Alexey Gryshyn</div>
     </footer>
     <script>
+
+        let editFunction = function (elem) {
+            let divList = elem.parentNode.parentNode.firstElementChild.querySelectorAll('div')
+            let editdiv = ` <div id='edittask'>
+                <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
+                        onclick="document.getElementById('edittask').style.display='none'">×</button>
+                </div>
+                <div>
+                    <input id="etext" type="text" value=${divList[0].innerText} required>
+                    <input id="eurl" type="url" value=${divList[1].innerText} required>
+                    <label>Datetime</label>
+                    <input id="edttm" value=${divList[2].innerText}type="datetime-local" required>
+                    <label>How often</label>
+                    <select id="ehowoften" required>
+                        <option ${divList[3].innerText==1? 'selected' : ''} value='1'>Every day</option>
+                        <option ${divList[3].innerText==7? 'selected' : ''} value='7'>Every week</option>
+                        <option ${divList[3].innerText==14? 'selected' : ''} value='14'>Every two weeks</option>
+                    </select>
+                    <label>Conferencing platform</label>
+                    <select id='eplatform' required>
+                        <option selected value='bbb'>BBB</option>
+                    </select>
+                    <button type="submit" onclick="editTask(elem.value)">Edit</button>
+                </div>
+            </div>`
+
+        }
+            
+      
+   
         let getAllTasks = async () => {
             const response = await fetch('http://localhost:8000/tasks', {
                 method: 'GET',
@@ -95,10 +145,14 @@
             let tasksArray = await response.json()
             tasksArray.forEach(task => {
                 divtask = `<div class="tasklist">${task.title}
-                    <span>${task.url}</span>
-                    <span>${task.dttm}</span>
-                    <span>${task.repeatTitle}</span>
-                    <span>${task.platformTitle}</span>
+                    <div class='allinfo'>
+                        <div>${task.title}</div>
+
+            <div>${task.url}</div>
+                            <div>${task.dttm}</div>
+                            <div>${task.repeatTitle}</div>
+                            <div>${task.platformTitle}</div>
+                        </div>
                         <div>
                             <button id='updateBut' value=${task.id} onclick="document.getElementById('edittask').style.display='grid'">edit</button>
                             <button id='updateBut' value=${task.id} onclick="deleteTask(this.value)">delete</button>
@@ -173,16 +227,20 @@
             }
         }
 
-         let deleteTask = async (id) => {
+        let deleteTask = async (but) => {
+            let body = {
+                "taskId": but.value
+            }
             try {
                 const response = await fetch('http://localhost:8000/tasks', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
                     },
-                    body: JSON.stringify({taskId: id})
+                    body: JSON.stringify(body)
                 })
                 console.log('done')
+                but.parentNode.parentNode.remove()
             } catch (error) {
                 console.log(error)
             } finally {
@@ -195,10 +253,6 @@
             try {
                 const response = await fetch('http://localhost:8000/users/signout', {
                     method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json;charset=utf-8',
-                    },
-                    body: JSON.stringify({test: 'parasha'})
                 })
                 console.log('done')
             } catch (error) {
