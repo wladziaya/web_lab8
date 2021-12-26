@@ -27,6 +27,10 @@ footer {
     margin-top: 10px;
 }
 
+label {
+    display: block;
+}
+
 #signForm a {
     color: #b2eff2;
 }
@@ -35,7 +39,7 @@ footer {
     color: #fff;
 }
 
-#signForm button {
+#signForm button, button {
     width: 50%;
     background-color: #b2eff2;
     border: 1px solid #b2eff2;
@@ -46,7 +50,7 @@ footer {
     opacity: 0.8;
 }
 
-#signForm {
+#signForm, #error404, #tasks {
     margin: 0 auto;
     align-items: center;
     display: flex;
@@ -57,7 +61,8 @@ footer {
     flex-direction: column;
 }
 
-#signForm input {
+
+#signForm input, #addtask input, select {
     width: 100%;
     background-color: #11939A;
     border: 1px solid #11939A;
@@ -65,8 +70,50 @@ footer {
 
 }
 
+#hide {
+    float:right;
+    color: red;
+    background: none;
+    border: none;
+    width: fit-content;
+    margin: 0;
+
+}
+
+#addtask {
+    background: #043d40; position: absolute; height: fit-content; width: 48vw; border: 2px solid #11939a;
+    border-radius: 2em;
+    min-width: 300px;
+    display: none;
+}
+
+.tasklist {
+    background-color: #11939A;
+    margin: 10px auto;
+    width: 80%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #d8f9fb;
+}
+
+#addtask input, select{
+    max-width: 480px;
+    margin: 15px;
+    outline: none;
+    line-height: 1.5rem;
+    padding: 10px;
+    border-radius: 15px;
+    font-family: inherit;
+    font-size: 20px;
+    width: -webkit-fill-available;
+    color: rgb(76, 76, 76);
+}
+
 #signForm button,
-#signForm input {
+#signForm input, 
+ #addtask button, #addbutton, #signout {
     max-width: 480px;
     margin: 15px;
     outline: none;
@@ -77,10 +124,49 @@ footer {
     font-size: 20px;
 }
 
+#signout {
+    float: right;
+    width: fit-content;
+    margin: 0;
+    padding: 7px;
+
+}
+
 #signForm input::-moz-placeholder {
     color: rgb(76, 76, 76);
 }
 
+#signError {
+    display: none;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 7px;
+    border-radius: 0.7em;
+}
+
 #signForm input::-webkit-input-placeholder {
     color: rgb(76, 76, 76);
+}
+
+#addtask input::-moz-placeholder {
+    color: rgb(76, 76, 76);
+}
+
+#addtask input::-webkit-input-placeholder {
+    color: rgb(76, 76, 76);
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgb(123 121 121 / 60%);
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
 }
