@@ -53,8 +53,8 @@
 
             </div>
 
-            <!-- <div id='edittask'>
-                <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
+            <div id='edittask'>
+                <!-- <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
                         onclick="document.getElementById('edittask').style.display='none'">×</button>
                 </div>
                 <div>
@@ -73,8 +73,8 @@
                         <option value='bbb'>BBB</option>
                     </select>
                     <button type="submit" onclick="editTask()">Edit</button>
-                </div>
-            </div> -->
+                </div> -->
+            </div>
 
             <div id='addtask'>
                 <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
@@ -108,7 +108,7 @@
 
         let editFunction = function (elem) {
             let divList = elem.parentNode.parentNode.firstElementChild.querySelectorAll('div')
-            let editdiv = ` <div id='edittask'>
+            let editdiv = ` 
                 <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
                         onclick="document.getElementById('edittask').style.display='none'">×</button>
                 </div>
@@ -129,7 +129,8 @@
                     </select>
                     <button type="submit" onclick="editTask(elem.value)">Edit</button>
                 </div>
-            </div>`
+            `
+            document.getElementById('edittask').innerHTML = editdiv
 
         }
             
