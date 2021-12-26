@@ -19,8 +19,15 @@ class AssetsController {
 
     async getNotFoundPage(client) {
         const { res } = client
-        res.writeHead(404, {'Content-Type': 'text/javascript; charset=utf-8'})
+        res.writeHead(404, {'Content-Type': 'text/html; charset=utf-8'})
         const filePath = path.join(__dirname, '../../', '404.html')
+        return await fsp.readFile(filePath)
+    }
+
+    async getMainPage(client) {
+        const { res } = client
+        res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
+        const filePath = path.join(__dirname, '../../', 'frontend/html/main.html')
         return await fsp.readFile(filePath)
     }
 }
