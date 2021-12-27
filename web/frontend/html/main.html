@@ -116,22 +116,22 @@
                     <input id="etext" type="text" value=${divList[0].innerText} required>
                     <input id="eurl" type="url" value=${divList[1].innerText} required>
                     <label>Datetime</label>
-                    <input id="edttm" value=${divList[2].innerText}type="datetime-local" required>
+                    <input id="edttm" value=${divList[2].innerText.replace('Z', '')} type="datetime-local" required>
                     <label>How often</label>
                     <select id="ehowoften" required>
-                        <option ${divList[3].innerText==1? 'selected' : ''} value='1'>Every day</option>
-                        <option ${divList[3].innerText==7? 'selected' : ''} value='7'>Every week</option>
-                        <option ${divList[3].innerText==14? 'selected' : ''} value='14'>Every two weeks</option>
+                        <option ${divList[3].innerText === 'Every day' ? 'selected' : ''} value='1'>Every day</option>
+                        <option ${divList[3].innerText === 'Every week' ? 'selected' : ''} value='7'>Every week</option>
+                        <option ${divList[3].innerText === 'Every two weeks' ? 'selected' : ''} value='14'>Every two weeks</option>
                     </select>
                     <label>Conferencing platform</label>
                     <select id='eplatform' required>
                         <option selected value='bbb'>BBB</option>
                     </select>
-                    <button type="submit" onclick="editTask(elem.value)">Edit</button>
+                    <button type="submit" onclick="editTask(${elem.value})">Edit</button>
                 </div>
             `
             document.getElementById('edittask').innerHTML = editdiv
-
+            document.getElementById('edittask').style.display = 'grid'
         }
             
       
@@ -205,8 +205,9 @@
         }
 
         let editTask = async (id) => {
+            console.log(id)
             let editedTask = {
-                "id": id,
+                "taskId": id,
                 "title": document.getElementById("etext").value,
                 "url": document.getElementById("eurl").value,
                 "dttm": document.getElementById("edttm").value,
