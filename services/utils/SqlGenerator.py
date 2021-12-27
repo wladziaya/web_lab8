@@ -13,6 +13,7 @@ class SqlGenerator:
             on t.user_id = u.id
         WHERE DATE(t.dttm)=CURDATE()
             and now()-t.dttm < 600;
+            and status_id != 0
         """
 
         return sql
