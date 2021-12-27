@@ -9,6 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
 from services.Classes.DbAPI import DbAPI
+from services.Classes.Worker import Worker
 from services.config import capabilities, address_remote_driver
 
 logging.basicConfig(filename='app.log', format='%(asctime)s - %(levelname)s - %(message)s')
@@ -69,7 +70,11 @@ class MainThread(Thread, DbAPI):
                                        options=options)
 
         if self.driver:
-            pass
+            worker = Worker(self.driver, self.task)
+            worker.join_conference()
+
+            self.close_driver()
+            self.cancel_task_execution()
 
     def close_driver(self):
         try:

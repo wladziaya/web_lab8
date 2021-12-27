@@ -5,6 +5,8 @@ from services.Classes.DbAPI import DbAPI
 
 class Task(BaseModel):
     id: int
+    first_name: str
+    last_name: str
     url: str
     title: str
     delta: int
