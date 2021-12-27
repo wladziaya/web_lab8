@@ -13,16 +13,17 @@
 
 <body>
     <header>
-        <div style="text-align: start;">Hello, motherfucker <button id='signout' onclick="signOut()">Sign out</button>
+        <div id='username' style="text-align: start;"> <button id='signout' onclick="signOut()">Sign out</button>
         </div>
     </header>
     <main>
         <div id=tasks>
-            <div style="height: 80%; width: 80%; background-color: #043d40; overflow-y: scroll; min-width: 300px;">
+            <div style="height: 80%; width: 80%; background-color: #043d40;  min-width: 300px;">
+
+                <div id='taskslist' style="overflow-y: scroll; height:inherit;"></div>
                 <div><button id="addbutton" onclick="
                     document.getElementById('addtask').style.display='grid'">Addtask
-                    </button></div>
-                <div id='taskslist'>
+                    </button>
                 </div>
 
             </div>
@@ -70,10 +71,10 @@
                         onclick="document.getElementById('edittask').style.display='none'">×</button>
                 </div>
                 <div>
-                    <input id="etext" type="text" value="${divList[0].innerText}" required>
-                    <input id="eurl" type="url" value="${divList[1].innerText}" required>
+                    <input id="etext" type="text" value=${divList[0].innerText} required>
+                    <input id="eurl" type="url" value=${divList[1].innerText} required>
                     <label>Datetime</label>
-                    <input id="edttm" value="${divList[2].innerText.replace('Z', '')}" type="datetime-local" required>
+                    <input id="edttm" value=${divList[2].innerText.replace('Z', '')} type="datetime-local" required>
                     <label>How often</label>
                     <select id="ehowoften" required>
                         <option ${divList[3].innerText === 'Every day' ? 'selected' : ''} value='1'>Every day</option>
@@ -90,8 +91,6 @@
             document.getElementById('edittask').innerHTML = editdiv
             document.getElementById('edittask').style.display = 'grid'
         }
-
-
 
         let getAllTasks = async () => {
             const response = await fetch('http://localhost:8000/tasks', {
@@ -128,8 +127,19 @@
 
         document.addEventListener("DOMContentLoaded", getAllTasks);
 
-        let username = "username"
-        // document.getElementsByTagName('header')[0].innerHTML = `Hello, ${username}`;
+        let getAllUserInfo = async () => {
+            const response = await fetch('http://localhost:8000/users', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+            });
+            let userInfo = await response.json()
+            document.getElementsById('username').innerText = `Hello, ${userInfo.username}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", getAllUserInfo);
+
 
         let buttonToggle = function (button) {
             if (button.innerHTML == '▼') {
