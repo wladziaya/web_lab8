@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fake Student</title>
     <link href="../frontend/css/styles.css" rel="stylesheet">
+    <!-- <link href="styles.css" rel="stylesheet"> -->
+
 </head>
 
 <body>
@@ -21,59 +23,11 @@
                     document.getElementById('addtask').style.display='grid'">Addtask
                     </button></div>
                 <div id='taskslist'>
-                    <!-- <div class="tasklist">Task1
-                        <div id='allinfo'>
-                            <div>${task.url}</div>
-                            <div>${task.dttm}</div>
-                            <div>${task.repeatTitle}</div>
-                            <div>${task.platformTitle}</div>
-                        </div>
-                        <div>
-                            <button id='updateBut'
-                             onclick="document.getElementById('edittask').style.display='grid'"
-                                >edit</button>
-                            <button id='updateBut' onclick="deleteTask(this)">delete</button>
-                        </div>
-                    </div>
-                    <div class="tasklist">Task1
-                        <div class='allinfo'>
-                            <div>${task.url}</div>
-                            <div>${task.dttm}</div>
-                            <div>${task.repeatTitle}</div>
-                            <div>${task.platformTitle}</div>
-                        </div>
-                        <div>
-                            <button id='updateBut'
-                             onclick="console.log(this.closest('.allinfo'))"
-                                >edit</button>
-                            <button id='updateBut' onclick="deleteTask(this)">delete</button>
-                        </div>
-                    </div> -->
                 </div>
 
             </div>
 
             <div id='edittask'>
-                <!-- <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
-                        onclick="document.getElementById('edittask').style.display='none'">×</button>
-                </div>
-                <div>
-                    <input id="etext" value='7777' type="text" required>
-                    <input id="eurl" type="url" required>
-                    <label>Datetime</label>
-                    <input id="edttm" type="datetime-local" required>
-                    <label>How often</label>
-                    <select id="ehowoften" value='7' required>
-                        <option value='1'>Every day</option>
-                        <option value='7'>Every week</option>
-                        <option  value='14'>Every two weeks</option>
-                    </select>
-                    <label>Conferencing platform</label>
-                    <select id='eplatform' required>
-                        <option value='bbb'>BBB</option>
-                    </select>
-                    <button type="submit" onclick="editTask()">Edit</button>
-                </div> -->
             </div>
 
             <div id='addtask'>
@@ -107,7 +61,10 @@
     <script>
 
         let editFunction = function (elem) {
-            let divList = elem.parentNode.parentNode.firstElementChild.querySelectorAll('div')
+            let divList = document.getElementById(`${elem.value}`).lastElementChild.querySelectorAll('div')
+            console.log(divList);
+            console.log(elem);
+            console.log(elem.value);
             let editdiv = ` 
                 <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
                         onclick="document.getElementById('edittask').style.display='none'">×</button>
@@ -133,9 +90,9 @@
             document.getElementById('edittask').innerHTML = editdiv
             document.getElementById('edittask').style.display = 'grid'
         }
-            
-      
-   
+
+
+
         let getAllTasks = async () => {
             const response = await fetch('http://localhost:8000/tasks', {
                 method: 'GET',
@@ -145,22 +102,27 @@
             });
             let tasksArray = await response.json()
             tasksArray.forEach(task => {
-                divtask = `<div class="tasklist">${task.title}
-                    <div class='allinfo'>
-                        <div>${task.title}</div>
-
-            <div>${task.url}</div>
+                divtask = `
+                    <div class="tasklist" id=${task.id}>
+                        <div class='maininfo'>
+                            <div class="title">
+                                <div class="titleDiv">${task.title}</div>
+                                <button class="showInfoBtn" value=${task.id} onclick="buttonToggle(this)">▼</button>
+                            </div>
+                            <div class='mainBtn'>
+                                <button class='updateBut' value=${task.id} onclick="editFunction(this)">edit</button>
+                                <button class='updateBut' value=${task.id} onclick="deleteTask(this)">delete</button>
+                            </div>
+                        </div>
+                        <div class='allinfo'>
+                            <div>${task.title}</div>
+                            <div>${task.url}</div>
                             <div>${task.dttm}</div>
                             <div>${task.repeatTitle}</div>
                             <div>${task.platformTitle}</div>
                         </div>
-                        <div>
-                            <button id='updateBut' value=${task.id} onclick="editFunction(this)">edit</button>
-                            <button id='updateBut' value=${task.id} onclick="deleteTask(this)">delete</button>
-                        </div>
-                        </div>`
+                    </div>`
                 document.getElementById('taskslist').innerHTML += divtask
-
             });
         }
 
@@ -168,6 +130,18 @@
 
         let username = "username"
         // document.getElementsByTagName('header')[0].innerHTML = `Hello, ${username}`;
+
+        let buttonToggle = function (button) {
+            if (button.innerHTML == '▼') {
+                let ourtask = document.getElementById(`${button.value}`);
+                ourtask.lastElementChild.style.display = 'block'
+                button.innerHTML = '▲'
+            } else {
+                let ourtask = document.getElementById(`${button.value}`);
+                ourtask.lastElementChild.style.display = 'none'
+                button.innerHTML = '▼'
+            }
+        }
 
         let createTask = async () => {
             let newTask = {
@@ -190,12 +164,33 @@
                 });
                 const data = await response.json()
                 document.getElementById('addtask').style.display = 'none'
-                let task = document.createElement('div');
-                task.className = 'tasklist'
-                task.id = data.id
-                task.innerHTML = newTask.title;
-                let firstTask = document.getElementById('taskslist').firstChild
-                document.getElementById('taskslist').insertBefore(task, firstTask)
+                divtask = `
+                    <div class="tasklist" id=${data.taskId}>
+                        <div class='maininfo'>
+                            <div class="title">
+                                <div class="titleDiv">${newTask.title}</div>
+                                <button class="showInfoBtn" value=${data.taskId} onclick="buttonToggle(this)">▼</button>
+                            </div>
+                            <div class='mainBtn'>
+                                <button class='updateBut' value=${data.taskId} onclick="editFunction(this)">edit</button>
+                                <button class='updateBut' value=${data.taskId} onclick="deleteTask(this)">delete</button>
+                            </div>
+                        </div>
+                        <div class='allinfo'>
+                            <div>${newTask.title}</div>
+                            <div>${newTask.url}</div>
+                            <div>${newTask.dttm}</div>
+                            <div>${newTask.repeatTitle}</div>
+                            <div>${newTask.platformTitle}</div>
+                        </div>
+                    </div>`
+                document.getElementById('taskslist').innerHTML += divtask
+                // let task = document.createElement('div');
+                // task.className = 'tasklist'
+                // task.id = data.id
+                // task.innerHTML = newTask.title;
+                // let firstTask = document.getElementById('taskslist').firstChild
+                // document.getElementById('taskslist').insertBefore(task, firstTask)
                 document.getElementById("text").value = ''
                 document.getElementById("url").value = ''
                 document.getElementById("dttm").value = ''
@@ -226,7 +221,18 @@
                     body: JSON.stringify(editedTask)
                 });
                 const data = await response.json()
+                document.getElementById('edittask').style.display = 'none'
+                let ourtask = document.getElementById(`${id}`);
+                let infoArray = document.getElementById(`${id}`).lastElementChild.querySelectorAll('div')
+                let mainTitle = document.getElementById(`${id}`).firstElementChild.querySelectorAll('div')
+                mainTitle[1].innerText = document.getElementById("etext").value;
+                infoArray[0].innerHTML = document.getElementById("etext").value;
+                infoArray[1].innerHTML = document.getElementById("eurl").value;
+                infoArray[2].innerHTML = document.getElementById("edttm").value
+                infoArray[3].innerHTML = document.getElementById("ehowoften").selectedOptions[0].text;
+                infoArray[4].innerHTML = document.getElementById("eplatform").value;
             }
+
         }
 
         let deleteTask = async (but) => {
@@ -242,7 +248,7 @@
                     body: JSON.stringify(body)
                 })
                 console.log('done')
-                but.parentNode.parentNode.remove()
+                document.getElementById(`${but.value}`).remove()
             } catch (error) {
                 console.log(error)
             } finally {
