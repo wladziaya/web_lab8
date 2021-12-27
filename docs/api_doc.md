@@ -100,19 +100,21 @@ Response 200 with json
 [
     {
         "id": 1,
-        "user_id": 1,
         "title": "Parallel Prog1",
         "url": "https://www.websitetovisit.com/pp",
         "dttm": "2021-11-17T08:25:00.000Z",
-        "status_id": 0
+        "delta": 7,
+        "repeatTitle": "Every week",
+        "platformTitle": "BBB"
     },
     {
         "id": 2,
-        "user_id": 1,
         "title": "Comp Arch 2",
-        "url": "https://www.websitetovisit.com/pp",
-        "dttm": "2021-11-17T08:25:00.000Z",
-        "status_id": 0
+        "url": "https://www.websitetovisit.com/test",
+        "dttm": "2021-12-20T10:30:00.000Z",
+        "delta": 1,
+        "repeatTitle": "Every day",
+        "platformTitle": "BBB"
     }
 ]
 ```
