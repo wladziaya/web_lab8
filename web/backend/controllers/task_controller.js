@@ -29,7 +29,7 @@ class TaskController {
             const { title, url, dttm, delta, repeatTitle, platformTitle } = body
             const session = await Session.get(client)
     
-            const task = new Task(undefined, title, url, dttm, session['user_id'], 0)
+            const task = new Task(undefined, title, url, dttm, session['user_id'], 1)
             const taskId = await this.taskService.create(task)
             await logger.debug('Create: Task created')
     
@@ -70,7 +70,7 @@ class TaskController {
             const { taskId, title, url, dttm, delta, repeatTitle, platformTitle } = body
             const session = await Session.get(client)
     
-            const task = new Task(taskId, title, url, dttm, session['user_id'], 0)
+            const task = new Task(taskId, title, url, dttm, session['user_id'], 1)
             const successUpdate = await this.taskService.update(task)
             await logger.debug(`Update: successUpdate=${successUpdate}`)
 

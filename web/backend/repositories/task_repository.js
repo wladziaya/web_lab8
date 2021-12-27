@@ -36,14 +36,14 @@ class TaskRepository {
 
     async update(task) {
         try {
-            const { id, title, url, dttm, userId, statusId } = task
+            const { id, title, url, dttm, userId } = task
             const sql = `
                 UPDATE task SET
-                user_id = ?, title = ?, url = ?, dttm = ?, status_id = ?
+                user_id = ?, title = ?, url = ?, dttm = ?
                 WHERE id = ? AND user_id = ?
             `
             const conn = await mysql.createConnection(db)
-            const [rows] = await conn.query(sql, [userId, title, url, dttm, statusId, id, userId])
+            const [rows] = await conn.query(sql, [userId, title, url, dttm, id, userId])
             await conn.end()
             return rows.changedRows
         } catch (error) {
