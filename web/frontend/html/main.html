@@ -70,10 +70,10 @@
                         onclick="document.getElementById('edittask').style.display='none'">×</button>
                 </div>
                 <div>
-                    <input id="etext" type="text" value=${divList[0].innerText} required>
-                    <input id="eurl" type="url" value=${divList[1].innerText} required>
+                    <input id="etext" type="text" value="${divList[0].innerText}" required>
+                    <input id="eurl" type="url" value="${divList[1].innerText}" required>
                     <label>Datetime</label>
-                    <input id="edttm" value=${divList[2].innerText.replace('Z', '')} type="datetime-local" required>
+                    <input id="edttm" value="${divList[2].innerText.replace('Z', '')}" type="datetime-local" required>
                     <label>How often</label>
                     <select id="ehowoften" required>
                         <option ${divList[3].innerText === 'Every day' ? 'selected' : ''} value='1'>Every day</option>

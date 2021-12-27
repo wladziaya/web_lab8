@@ -53,7 +53,7 @@ class TaskController {
         try {
             const { res } = client
             const session = await Session.get(client)
-            res.writeHead(200, {'Content-Type': 'application/json'})    
+            res.writeHead(200, {'Content-Type': 'application/json'})
             const result = await this.taskService.findAll(session['user_id'])
             await logger.debug(`FindAll: ${result.length} Tasks found`)
             return result

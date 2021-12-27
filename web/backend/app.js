@@ -20,6 +20,7 @@ const port = 8000
 const routing = {
     'GET': {
         '/': async (client) => await assetsController.getMainPage(client),
+        '/users': async (client) => await userController.findById(client),
         '/users/signin': async (client) => userController.signInGet(client),
         '/users/signup': async (client) => userController.signUpGet(client),
         '/tasks': async (client) => taskController.findAll(client),

@@ -30,6 +30,21 @@ Response 200 with json
 
 ---
 
+### GET `/users` - returns information about User
+
+If success:
+
+Response 200 with json
+```json
+{
+    "username": "mr_robot",
+    "firstName": "Eliot",
+    "lastName": "Alderson"
+}
+```
+
+---
+
 ### POST `/users/signin` - logs into system with created User data
 Expected request body:
 ```json
