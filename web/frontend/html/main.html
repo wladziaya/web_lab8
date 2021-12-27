@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fake Student</title>
     <link href="../frontend/css/styles.css" rel="stylesheet">
-    <!-- <link href="styles.css" rel="stylesheet"> -->
+    <link href="styles.css" rel="stylesheet">
 
 </head>
 
@@ -60,7 +60,6 @@
         <div class="athors">Bogdan Chernykh, Vlada Yaremenko, Alexey Gryshyn</div>
     </footer>
     <script>
-
         let editFunction = function (elem) {
             let divList = document.getElementById(`${elem.value}`).lastElementChild.querySelectorAll('div')
             console.log(divList);
@@ -135,7 +134,7 @@
                 },
             });
             let userInfo = await response.json()
-            document.getElementsById('username').innerText = `Hello, ${userInfo.username}`;
+            document.getElementById('username').firstChild.data = `Hello, ${userInfo.username}`;
         }
 
         document.addEventListener("DOMContentLoaded", getAllUserInfo);
@@ -195,12 +194,6 @@
                         </div>
                     </div>`
                 document.getElementById('taskslist').innerHTML += divtask
-                // let task = document.createElement('div');
-                // task.className = 'tasklist'
-                // task.id = data.id
-                // task.innerHTML = newTask.title;
-                // let firstTask = document.getElementById('taskslist').firstChild
-                // document.getElementById('taskslist').insertBefore(task, firstTask)
                 document.getElementById("text").value = ''
                 document.getElementById("url").value = ''
                 document.getElementById("dttm").value = ''
@@ -280,7 +273,6 @@
                 location.reload()
             }
         }
-
     </script>
 </body>
 
