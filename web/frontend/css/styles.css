@@ -29,6 +29,10 @@ footer {
 
 label {
     display: block;
+    color: #b2eff2;
+    display: block;
+    font-size: 17px;
+    font-weight: bold;
 }
 
 #signForm a {
@@ -47,6 +51,10 @@ label {
 }
 
 #signForm button:hover {
+    opacity: 0.8;
+}
+
+button:hover {
     opacity: 0.8;
 }
 
@@ -91,11 +99,33 @@ label {
     background-color: #11939A;
     margin: 10px auto;
     width: 80%;
-    height: 40px;
-    display: flex;
+    height: fit-content;
     justify-content: center;
     align-items: center;
     color: #d8f9fb;
+    border-radius: 0.5em;
+    padding-bottom: 5px;
+
+}
+
+.mainBtn {
+    position: absolute;
+    right: 0;
+}
+
+.mainBtn button {
+    border-radius: 1em;
+    font-size: 15px;
+    border-radius: 1em;
+    font-size: 15px;
+    margin: 4px;
+    margin-bottom: 0;
+}
+
+.title {
+    text-align: center;
+  width: 100%;
+  font-size: 20px;
 }
 
 #addtask input, select,  #edittask input{
@@ -122,6 +152,38 @@ label {
     border-radius: 15px;
     font-family: inherit;
     font-size: 20px;
+}
+
+.titleDiv {
+    display: contents;
+}
+
+.allinfo {
+    display: none;
+    margin: 0 20px;
+    text-align: left;
+}
+
+.maininfo {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    margin: 5px auto;
+    height: 50px;
+    padding-bottom: 5px;
+}
+
+.showInfoBtn {
+    width: fit-content;
+    background: none;
+    color: #d8f9fb;
+    border: none;
+    font-size: inherit;
+}
+
+.showInfoBtn:hover {
+    color: #046c72;
 }
 
 #signout {
