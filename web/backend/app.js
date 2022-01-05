@@ -1,65 +1,20 @@
 const http = require('http')
+const { STATUS_CODES, ROUTES, LOGS_FILEPATH } = require('./config')
 
 const Client = require('./entities/client')
 const Session = require('./entities/session')
 const Logger = require('./utils/logger')
 
-const AssetsController = require('./controllers/assets_controller')
-const UserController = require('./controllers/user_controller')
-const TaskController = require('./controllers/task_controller')
+const AsesstsController = require('./controllers/assets_controller')
 
-const assetsController = new AssetsController()
-const userController = new UserController()
-const taskController = new TaskController()
+const router = require('./routes/router')
 
-const logger = new Logger('./logs/main_log.txt', __filename)
+const logger = new Logger(LOGS_FILEPATH, __filename)
+
+const assetsController = new AsesstsController()
 
 const hostname = '127.0.0.1'
 const port = 8000
-
-const routing = {
-    'GET': {
-        '/': async (client) => await assetsController.getMainPage(client),
-        '/users': async (client) => await userController.findById(client),
-        '/users/signin': async (client) => userController.signInGet(client),
-        '/users/signup': async (client) => userController.signUpGet(client),
-        '/tasks': async (client) => taskController.findAll(client),
-        '/frontend/css': async (client) => assetsController.getCSSFile(client),
-        '/frontend/js': async (client) => assetsController.getJSFile(client)
-    },
-    'POST': {
-        '/users/signin': async (client) => userController.signInPost(client),
-        '/users/signup': async (client) => userController.signUpPost(client),
-        '/tasks': async (client) => taskController.create(client) 
-    },
-    'PUT': {
-        '/tasks': async (client) => taskController.update(client)
-    },
-    'DELETE': {
-        '/users/signout': async (client) => userController.signOut(client),
-        '/tasks': async (client) => taskController.delete(client)
-    }
-}
-
-const router = req => {
-    const routes = routing[req.method]
-    if (routes[req.url]) return routes[req.url]
-
-    const routesArray = Object.keys(routes)
-    const splitedUrl = req.url.split('/')
-    const splitedRoutes = routesArray.map(item => item.split('/'))
-    const counts = []
-    for (let i = 0; i < splitedRoutes.length; i++) {
-        let count = 0
-        for (let j = 0; j < splitedRoutes[i].length; j++) {
-            const regex = new RegExp(splitedRoutes[i][j])
-            const result = regex.test(splitedUrl[j])
-            if (result) count++
-        }
-        counts.push(count)
-    }
-    return routes[routesArray[counts.indexOf(Math.max(...counts))]]
-}
 
 const rendering = {
     string: s => s,
@@ -73,17 +28,17 @@ const securityPatch = (fn) => async (client) => {
     await logger.info(`Patcher: session=${sessionID}, method=${req.method}`)
 
     // User in system tries to sign up or sing in
-    if (sessionID && (req.url === '/users/signin' | req.url === '/users/signup')) {
+    if (sessionID && (req.url === ROUTES.GENERAL.SIGN_IN | req.url === ROUTES.GENERAL.SIGN_UP)) {
         await logger.info('User in system')
-        if (req.method === 'GET') {res.writeHead(302, {Location: '/'}); return}
-        else if (req.method === 'POST') return {'error': {'code': 400, 'message': 'User can`t do this while being authorized'}}
+        if (req.method === 'GET') {res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN}); return}
+        else if (req.method === 'POST') return {'error': {'code': STATUS_CODES.BAD_REQUEST, 'message': 'User can`t do this while being authorized'}}
     }
 
     // User NOT in system tries to get access to resources except sing in, sing up and frontend files (.css, .js)
-    if (!sessionID && (req.url !== '/users/signin' && req.url !== '/users/signup' && !req.url.match('/frontend/'))) {
+    if (!sessionID && (req.url !== ROUTES.GENERAL.SIGN_IN && req.url !== ROUTES.GENERAL.SIGN_UP && !req.url.match(/\/frontend\/(css|js)/))) {
         await logger.info('User NOT in system')
-        if (req.method === 'GET') {res.writeHead(302, {Location: '/users/signin'}); return}
-        else if (req.method === 'POST') {res.writeHead(403, 'Forbidden'); return}
+        if (req.method === 'GET') {res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.SIGN_IN}); return}
+        else if (req.method === 'POST') {res.writeHead(STATUS_CODES.FORBIDDEN, 'Forbidden'); return}
     }
 
     return await fn(client)
@@ -99,10 +54,11 @@ const server = http.createServer(async (req, res) => {
         await logger.info(`Session: ${client.sessionID}`)
 
         const handler = router(req)
-        await logger.debug(`hadler: ${handler}`)
+        await logger.debug(`handler: ${handler}`)
 
         if (!handler) {
             res.end(await assetsController.getNotFoundPage(client))
+            return
         }
 
         const patchedHandler = securityPatch(handler)
@@ -120,7 +76,7 @@ const server = http.createServer(async (req, res) => {
         res.end(result)
     } catch (error) {
         await logger.error(error.message)
-        res.statusCode = 500
+        res.statusCode = STATUS_CODES.INTERNAL_SERVER_ERROR
         res.end('Internal Server Error 500')
     }
 })

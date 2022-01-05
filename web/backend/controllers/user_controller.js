@@ -6,11 +6,12 @@ const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
 const { getRequestBody } = require('../utils/util')
+const { STATUS_CODES, ROUTES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
 
 const md5 = require('md5')
 const fsp = require('fs/promises')
 
-const logger = new Logger('./logs/main_log.txt', __filename)
+const logger = new Logger(LOGS_FILEPATH, __filename)
 
 class UserController {
 
@@ -22,7 +23,7 @@ class UserController {
         try {
             // Registration
             const { res } = client
-            res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
+            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.HTML})
             const result = await fsp.readFile('../frontend/html/signup.html', {encoding: 'utf-8'})
             return result
         } catch (error) {
@@ -34,7 +35,7 @@ class UserController {
         try {
             // Login
             const { res } = client
-            res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'})
+            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.HTML})
             const result = await fsp.readFile('../frontend/html/signin.html', {encoding: 'utf-8'})
             return result
         } catch (error) {
@@ -50,8 +51,8 @@ class UserController {
 
             if(!body) {
                 await logger.debug('SignUpPost: recieved request body is empty')
-                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
-                return {error: {code: 400, message: 'Get no JSON data from POST request'}}
+                res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                return {error: {code: STATUS_CODES.BAD_REQUEST, message: 'Get no JSON data from POST request'}}
             }
             await logger.debug('SignUpPost: recieved request body contains data')
 
@@ -61,7 +62,7 @@ class UserController {
             await Session.start(client, {'user_id': userId, 'start_time': new Date()})
             client.sendCookie()
             await logger.info('Signup: Session have been created')
-            res.writeHead(302, {Location: '/'})
+            res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
             return
         } catch (error) {
             await logger.error(error.message)
@@ -76,8 +77,8 @@ class UserController {
 
             if(!body) {
                 await logger.debug('SignInPost: recieved request body is empty')
-                res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
-                return {error: {code: 400, message: 'Get no JSON data from POST request'}}
+                res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                return {error: {code: STATUS_CODES.BAD_REQUEST, message: 'Get no JSON data from POST request'}}
             }
             await logger.debug('SignInPost: recieved request body contains data')
 
@@ -86,21 +87,21 @@ class UserController {
                 if (user.password === md5(body.password)) {
                     await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
                     client.sendCookie()
-                    res.writeHead(302, {Location: '/'})
+                    res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
                     return 
                 } else {
-                    res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
+                    res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
                     return {'error': {
-                        'code': 400,
+                        'code': STATUS_CODES.BAD_REQUEST,
                         'message': 'Incorrect password'
                         }
                     }
                 }
             }
 
-            res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'})
+            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
             return {'error': {
-                'code': 400,
+                'code': STATUS_CODES.BAD_REQUEST,
                 'message': 'User not found'
                 }
             }
@@ -115,7 +116,7 @@ class UserController {
             const { res } = client
             await Session.delete(client)
             client.sendCookie()
-            res.writeHead(302, {Location: '/users/signin'})
+            res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.SIGN_IN})
             return
         } catch (error) {
             await logger.error(error.message)
@@ -127,7 +128,7 @@ class UserController {
         const session = await Session.get(client)
         const user = await this.userService.findById(session['user_id'])
         await logger.debug(`FindById: ${user['username']}, ${user['first_name']}, ${user['last_name']}`)
-        res.writeHead(200, {'Content-Type': 'application/json'}) 
+        res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON}) 
         return {'username': user['username'], 'firstName': user['first_name'], 'lastName': user['last_name']}
     }
 }
