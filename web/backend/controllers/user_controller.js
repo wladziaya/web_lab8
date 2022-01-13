@@ -5,11 +5,10 @@ const User = require('../entities/user')
 const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
-const { getRequestBody } = require('../utils/util')
+const { getRequestBody, generateError } = require('../utils/util')
 const { STATUS_CODES, ROUTES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
 
 const md5 = require('md5')
-const fsp = require('fs/promises')
 
 const logger = new Logger(LOGS_FILEPATH, __filename)
 
@@ -19,31 +18,8 @@ class UserController {
         this.userService = new UserService()
     }
 
-    async signUpGet(client) {
-        try {
-            // Registration
-            const { res } = client
-            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.HTML})
-            const result = await fsp.readFile('../frontend/html/signup.html', {encoding: 'utf-8'})
-            return result
-        } catch (error) {
-            await logger.error(error.message)
-        }
-    }
-
-    async signInGet(client) {
-        try {
-            // Login
-            const { res } = client
-            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.HTML})
-            const result = await fsp.readFile('../frontend/html/signin.html', {encoding: 'utf-8'})
-            return result
-        } catch (error) {
-            await logger.error(error.message)
-        }
-    }
-
-    async signUpPost(client) {
+    // POST
+    async signUp(client) {
         try {
             // Registration
             const { req, res } = client
@@ -52,7 +28,7 @@ class UserController {
             if(!body) {
                 await logger.debug('SignUpPost: recieved request body is empty')
                 res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-                return {error: {code: STATUS_CODES.BAD_REQUEST, message: 'Get no JSON data from POST request'}}
+                return generateError(STATUS_CODES.BAD_REQUEST, 'Get no JSON data from POST request')
             }
             await logger.debug('SignUpPost: recieved request body contains data')
 
@@ -69,7 +45,8 @@ class UserController {
         }
     }
 
-    async signInPost(client) {
+    // POST
+    async signIn(client) {
         try {
             // Login
             const { req, res } = client
@@ -78,7 +55,7 @@ class UserController {
             if(!body) {
                 await logger.debug('SignInPost: recieved request body is empty')
                 res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-                return {error: {code: STATUS_CODES.BAD_REQUEST, message: 'Get no JSON data from POST request'}}
+                return generateError(STATUS_CODES.BAD_REQUEST, 'Get no JSON data from POST request')
             }
             await logger.debug('SignInPost: recieved request body contains data')
 
@@ -91,20 +68,12 @@ class UserController {
                     return 
                 } else {
                     res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-                    return {'error': {
-                        'code': STATUS_CODES.BAD_REQUEST,
-                        'message': 'Incorrect password'
-                        }
-                    }
+                    return generateError(STATUS_CODES.BAD_REQUEST, 'Incorrect password')
                 }
             }
 
             res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-            return {'error': {
-                'code': STATUS_CODES.BAD_REQUEST,
-                'message': 'User not found'
-                }
-            }
+            return generateError(STATUS_CODES.BAD_REQUEST, 'User not found')
         } catch (error) {
             await logger.error(error.message)
         }
@@ -123,6 +92,7 @@ class UserController {
         }
     }
 
+    // GET
     async findById(client) {
         const { res } = client
         const session = await Session.get(client)

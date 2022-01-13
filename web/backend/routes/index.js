@@ -11,16 +11,16 @@ const taskController = new TaskController()
 const GET_ROUTES = new Map([
     [ROUTES.PAGES.MAIN, async (client) => assetsController.getMainPage(client)],
     [ROUTES.API.FIND_USER, async (client) => userController.findById(client)],
-    [ROUTES.PAGES.SIGN_IN, async (client) => userController.signInGet(client)],
-    [ROUTES.PAGES.SIGN_UP, async (client) => userController.signUpGet(client)],
+    [ROUTES.PAGES.SIGN_IN, async (client) => assetsController.getSignInPage(client)],
+    [ROUTES.PAGES.SIGN_UP, async (client) => assetsController.getSignUpPage(client)],
     [ROUTES.API.FIND_TASKS, async (client) => taskController.findAll(client)],
     [ROUTES.ASSETS.CSS, async (client) => assetsController.getCSSFile(client)],
     [ROUTES.ASSETS.JS, async (client) => assetsController.getJSFile(client)]
 ])
 
 const POST_ROUTES = new Map([
-    [ROUTES.API.SIGN_IN, async (client) => userController.signInPost(client)],
-    [ROUTES.API.SIGN_UP, async (client) => userController.signUpPost(client)],
+    [ROUTES.API.SIGN_IN, async (client) => userController.signIn(client)],
+    [ROUTES.API.SIGN_UP, async (client) => userController.signUp(client)],
     [ROUTES.API.CREATE_TASK, async (client) => taskController.create(client)] 
 ])
 

@@ -9,7 +9,7 @@ const Platform = require('../entities/platform')
 const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
-const { getRequestBody } = require('../utils/util')
+const { getRequestBody, generateError } = require('../utils/util')
 
 const { STATUS_CODES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
 
@@ -78,7 +78,7 @@ class TaskController {
 
             if (!successUpdate) {
                 res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-                return {'error': {'code': STATUS_CODES.BAD_REQUEST, 'message': 'Can`t update task: task doesn`t exist or you don`t have rights to update it'}}
+                return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t update task: task doesn`t exist or you don`t have rights to update it')
             }
     
             const repeat = new Repeat(delta, repeatTitle, taskId)
@@ -105,7 +105,7 @@ class TaskController {
 
             if (!successDelete) {
                 res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-                return {'error': {'code': STATUS_CODES.BAD_REQUEST, 'message': 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it'}}
+                return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it')
             }
 
             res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})

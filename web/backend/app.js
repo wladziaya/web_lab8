@@ -1,5 +1,6 @@
 const http = require('http')
 const { STATUS_CODES, ROUTES, LOGS_FILEPATH } = require('./config')
+const { generateError } = require('./utils/util')
 
 const Client = require('./entities/client')
 const Session = require('./entities/session')
@@ -31,7 +32,7 @@ const securityPatch = (fn) => async (client) => {
     if (sessionID && (req.url === ROUTES.GENERAL.SIGN_IN | req.url === ROUTES.GENERAL.SIGN_UP)) {
         await logger.info('User in system')
         if (req.method === 'GET') {res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN}); return}
-        else if (req.method === 'POST') return {'error': {'code': STATUS_CODES.BAD_REQUEST, 'message': 'User can`t do this while being authorized'}}
+        else if (req.method === 'POST') return generateError(STATUS_CODES.BAD_REQUEST, 'User can`t do this while being authorized')
     }
 
     // User NOT in system tries to get access to resources except sing in, sing up and frontend files (.css, .js)

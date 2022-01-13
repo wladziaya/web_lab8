@@ -43,6 +43,8 @@ const generateToken = () => {
     key += ALPHA_DIGIT[index]
   }
   return key
-};
+}
 
-module.exports = { parseCookies, getRequestBody, generateToken }
+const generateError = (code, message) => ({error: {code, message}})
+
+module.exports = { parseCookies, getRequestBody, generateToken, generateError }
