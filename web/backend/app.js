@@ -1,6 +1,5 @@
 const http = require('http')
-const { STATUS_CODES, ROUTES, LOGS_FILEPATH } = require('./config')
-const { generateError } = require('./utils/util')
+const { STATUS_CODES, LOGS_FILEPATH } = require('./config')
 
 const Client = require('./entities/client')
 const Session = require('./entities/session')
@@ -9,6 +8,7 @@ const Logger = require('./utils/logger')
 const AsesstsController = require('./controllers/assets_controller')
 
 const router = require('./routes/router')
+const securityPatch = require('./routes/restrictions')
 
 const logger = new Logger(LOGS_FILEPATH, __filename)
 
@@ -21,28 +21,6 @@ const rendering = {
     string: s => s,
     object: JSON.stringify,
     undefined: () => 'Not Found',
-}
-
-const securityPatch = (fn) => async (client) => {
-    const { req, res, sessionID } = client
-
-    await logger.info(`Patcher: session=${sessionID}, method=${req.method}`)
-
-    // User in system tries to sign up or sing in
-    if (sessionID && (req.url === ROUTES.GENERAL.SIGN_IN | req.url === ROUTES.GENERAL.SIGN_UP)) {
-        await logger.info('User in system')
-        if (req.method === 'GET') {res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN}); return}
-        else if (req.method === 'POST') return generateError(STATUS_CODES.BAD_REQUEST, 'User can`t do this while being authorized')
-    }
-
-    // User NOT in system tries to get access to resources except sing in, sing up and frontend files (.css, .js)
-    if (!sessionID && (req.url !== ROUTES.GENERAL.SIGN_IN && req.url !== ROUTES.GENERAL.SIGN_UP && !req.url.match(/\/frontend\/(css|js)/))) {
-        await logger.info('User NOT in system')
-        if (req.method === 'GET') {res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.SIGN_IN}); return}
-        else if (req.method === 'POST') {res.writeHead(STATUS_CODES.FORBIDDEN, 'Forbidden'); return}
-    }
-
-    return await fn(client)
 }
 
 const server = http.createServer(async (req, res) => {
