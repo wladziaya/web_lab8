@@ -27,7 +27,7 @@ class UserController {
 
             if(!body) {
                 await logger.debug('SignUpPost: recieved request body is empty')
-                res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
                 return generateError(STATUS_CODES.BAD_REQUEST, 'Get no JSON data from POST request')
             }
             await logger.debug('SignUpPost: recieved request body contains data')
@@ -54,7 +54,7 @@ class UserController {
 
             if(!body) {
                 await logger.debug('SignInPost: recieved request body is empty')
-                res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
                 return generateError(STATUS_CODES.BAD_REQUEST, 'Get no JSON data from POST request')
             }
             await logger.debug('SignInPost: recieved request body contains data')
@@ -67,12 +67,12 @@ class UserController {
                     res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
                     return 
                 } else {
-                    res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                    res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
                     return generateError(STATUS_CODES.BAD_REQUEST, 'Incorrect password')
                 }
             }
 
-            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+            res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
             return generateError(STATUS_CODES.BAD_REQUEST, 'User not found')
         } catch (error) {
             await logger.error(error.message)

@@ -43,7 +43,7 @@ class TaskController {
             await this.platformService.create(platform)
             await logger.debug('Create: Platform created')
            
-            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+            res.writeHead(STATUS_CODES.CREATED, {'Content-Type': MIME_TYPES.JSON})
             return {taskId}
         } catch (error) {
             await logger.error(error.message)
@@ -77,7 +77,7 @@ class TaskController {
             await logger.debug(`Update: successUpdate=${successUpdate}`)
 
             if (!successUpdate) {
-                res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
                 return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t update task: task doesn`t exist or you don`t have rights to update it')
             }
     
@@ -87,8 +87,8 @@ class TaskController {
             const platform = new Platform(platformTitle, taskId)
             await this.platformService.update(platform)
             
-            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-            return {taskId}
+            res.writeHead(STATUS_CODES.NO_CONTENT)
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }
@@ -104,12 +104,12 @@ class TaskController {
             await logger.debug(`Delete: successDelete=${successDelete}`)
 
             if (!successDelete) {
-                res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
                 return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it')
             }
 
-            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-            return {'taskId': body.taskId}
+            res.writeHead(STATUS_CODES.NO_CONTENT)
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }

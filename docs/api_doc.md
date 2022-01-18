@@ -18,7 +18,7 @@ Response 302 - Redirect to main page `/`
 
 If no json recieved: 
 
-Response 200 with json
+Response 400 with json
 ```json
 {
     "error": {
@@ -59,7 +59,7 @@ Response 302 - Redirect to main page `/`
 
 If no json recieved: 
 
-Response 200 with json
+Response 400 with json
 ```json
 {
     "error": {
@@ -71,7 +71,7 @@ Response 200 with json
 
 If password is incorrect:
 
-Response 200 with json
+Response 400 with json
 ```json
 {
     "error": {
@@ -83,7 +83,7 @@ Response 200 with json
 
 If no such user in system:
 
-Response 200 with json
+Response 400 with json
 ```json
 {
     "error": {
@@ -158,7 +158,7 @@ Expected request body:
 
 If success:
 
-Response 200 with json
+Response 201 with json
 ```json
 {
     "taskId": 1
@@ -183,16 +183,11 @@ Expected request body:
 
 If success:
 
-Response 200 with json
-```json
-{
-    "taskId": 2
-}
-```
+Response 204
 
 If no such Task or User tries to update someone's else Task:
 
-Response 200 with json
+Response 400 with json
 ```json
 {
     "error": {
@@ -214,16 +209,11 @@ Expected request body:
 
 If success:
 
-Response 200 with json
-```json
-{
-    "taskId": 2
-}
-```
+Response 204
 
 If no such Task or User tries to update someone's else Task:
 
-Response 200 with json
+Response 400 with json
 ```json
 {
     "error": {
