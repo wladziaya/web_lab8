@@ -1,7 +1,6 @@
 const fsp = require('fs/promises')
 const path = require('path')
 
-
 class Logger {
 
     constructor(fileToSave=undefined, currentFile) {

@@ -9,9 +9,11 @@ const Platform = require('../entities/platform')
 const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
-const { getRequestBody } = require('../utils/util')
+const { getRequestBody, generateError } = require('../utils/util')
 
-const logger = new Logger('./logs/main_log.txt', __filename)
+const { STATUS_CODES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
+
+const logger = new Logger(LOGS_FILEPATH, __filename)
 
 class TaskController {
 
@@ -41,7 +43,7 @@ class TaskController {
             await this.platformService.create(platform)
             await logger.debug('Create: Platform created')
            
-            res.writeHead(200, {'Content-Type': 'application/json'})
+            res.writeHead(STATUS_CODES.CREATED, {'Content-Type': MIME_TYPES.JSON})
             return {taskId}
         } catch (error) {
             await logger.error(error.message)
@@ -53,7 +55,7 @@ class TaskController {
         try {
             const { res } = client
             const session = await Session.get(client)
-            res.writeHead(200, {'Content-Type': 'application/json'})
+            res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
             const result = await this.taskService.findAll(session['user_id'])
             await logger.debug(`FindAll: ${result.length} Tasks found`)
             return result
@@ -75,8 +77,8 @@ class TaskController {
             await logger.debug(`Update: successUpdate=${successUpdate}`)
 
             if (!successUpdate) {
-                res.writeHead(200, {'Content-Type': 'application/json'})
-                return {'error': {'code': 400, 'message': 'Can`t update task: task doesn`t exist or you don`t have rights to update it'}}
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
+                return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t update task: task doesn`t exist or you don`t have rights to update it')
             }
     
             const repeat = new Repeat(delta, repeatTitle, taskId)
@@ -85,8 +87,8 @@ class TaskController {
             const platform = new Platform(platformTitle, taskId)
             await this.platformService.update(platform)
             
-            res.writeHead(200, {'Content-Type': 'application/json'})
-            return {taskId}
+            res.writeHead(STATUS_CODES.NO_CONTENT)
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }
@@ -102,12 +104,12 @@ class TaskController {
             await logger.debug(`Delete: successDelete=${successDelete}`)
 
             if (!successDelete) {
-                res.writeHead(200, {'Content-Type': 'application/json'})
-                return {'error': {'code': 400, 'message': 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it'}}
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
+                return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it')
             }
 
-            res.writeHead(200, {'Content-Type': 'application/json'})
-            return {'taskId': body.taskId}
+            res.writeHead(STATUS_CODES.NO_CONTENT)
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }

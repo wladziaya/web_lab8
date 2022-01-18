@@ -20,7 +20,7 @@ class TaskRepository {
         try {
             const sql = `
                 SELECT t.id, t.title, t.url, t.dttm, r.delta, r.title AS repeatTitle, p.title AS platformTitle
-                FROM test.task AS t
+                FROM task AS t
                 INNER JOIN \`repeat\` AS r ON t.id = r.task_id
                 INNER JOIN \`platform\` AS p ON t.id = p.task_id
                 WHERE user_id = ?;
