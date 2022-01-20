@@ -57,10 +57,25 @@ const ROUTES = {
 
 const LOGS_FILEPATH = './logs/main_log.txt'
 
+const CANNOT_OPERATE_TASK = operation => {
+    return `Can't ${operation} task: task doesn't exist or you don't have rights to ${operation} it`
+}
+
+const ERROR_MESSAGES = {
+    EMPTY_REQUEST_BODY: 'Get no JSON data from request body',
+    NO_SUCH_USER: 'User not found',
+    INCORRECT_PASSWORD: 'Incorrect password',
+    CANNOT_UPDATE_TASK: CANNOT_OPERATE_TASK('update'),
+    CANNOT_DELETE_TASK: CANNOT_OPERATE_TASK('delete'),
+    RESTRICTION_FOR_AUTHORIZED_USERS: 'User can`t do this while being authorized',
+    UNAUTHORIZED_ACCESS: 'User must be authorized to perform such actions',
+}
+
 module.exports = { 
     db,
     STATUS_CODES ,
     MIME_TYPES,
     ROUTES,
-    LOGS_FILEPATH
+    LOGS_FILEPATH,
+    ERROR_MESSAGES
  }

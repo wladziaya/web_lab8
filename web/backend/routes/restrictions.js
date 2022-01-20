@@ -1,5 +1,5 @@
 const { generateError } = require('../utils/util')
-const { STATUS_CODES, ROUTES, MIME_TYPES } = require('../config')
+const { STATUS_CODES, ROUTES, MIME_TYPES, ERROR_MESSAGES } = require('../config')
 
 const userInSystemHandler = {
     GET: (client) => {
@@ -8,7 +8,7 @@ const userInSystemHandler = {
     },
     POST: (client) => {
         client.res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-        return generateError(STATUS_CODES.BAD_REQUEST, 'User can`t do this while being authorized')
+        return generateError(STATUS_CODES.BAD_REQUEST, ERROR_MESSAGES.RESTRICTION_FOR_AUTHORIZED_USERS)
     }
 }
 
@@ -19,7 +19,7 @@ const userNotInSystemHandler = {
     },
     POST: (client) => {
         client.res.writeHead(STATUS_CODES.FORBIDDEN, {'Content-Type': MIME_TYPES.JSON})
-        return generateError(STATUS_CODES.FORBIDDEN, 'User must be authorized to perform such actions')
+        return generateError(STATUS_CODES.FORBIDDEN, ERROR_MESSAGES.UNAUTHORIZED_ACCESS)
     }
 }
 

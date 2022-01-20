@@ -1,3 +1,5 @@
+const { STATUS_CODES, MIME_TYPES } = require('../config')
+
 const parseCookies = (cookie = '') =>
     cookie
         .split(';')
@@ -47,4 +49,15 @@ const generateToken = () => {
 
 const generateError = (code, message) => ({error: {code, message}})
 
-module.exports = { parseCookies, getRequestBody, generateToken, generateError }
+const noJSONBodyHandler = (res, message) => {
+    res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
+    return generateError(STATUS_CODES.BAD_REQUEST, message)
+}
+
+module.exports = { 
+    parseCookies,
+    getRequestBody,
+    generateToken,
+    generateError,
+    noJSONBodyHandler
+}
