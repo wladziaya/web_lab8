@@ -5,8 +5,8 @@ const User = require('../entities/user')
 const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
-const { getRequestBody, generateError } = require('../utils/util')
-const { STATUS_CODES, ROUTES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
+const { getRequestBody, generateError, noJSONBodyHandler } = require('../utils/util')
+const { STATUS_CODES, ROUTES, MIME_TYPES, LOGS_FILEPATH, ERROR_MESSAGES } = require('../config')
 
 const md5 = require('md5')
 
@@ -24,13 +24,9 @@ class UserController {
             // Registration
             const { req, res } = client
             const body = await getRequestBody(req)
+            await logger.debug(`SignUp: recieved request body = ${body} `)
 
-            if(!body) {
-                await logger.debug('SignUpPost: recieved request body is empty')
-                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-                return generateError(STATUS_CODES.BAD_REQUEST, 'Get no JSON data from POST request')
-            }
-            await logger.debug('SignUpPost: recieved request body contains data')
+            if (!body) return noJSONBodyHandler(res, ERROR_MESSAGES.EMPTY_REQUEST_BODY)
 
             const { firstName, lastName, username, password } = body
             const user = new User(firstName, lastName, username, md5(password))
@@ -39,7 +35,7 @@ class UserController {
             client.sendCookie()
             await logger.info('Signup: Session have been created')
             res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
-            return
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }
@@ -51,29 +47,25 @@ class UserController {
             // Login
             const { req, res } = client
             const body = await getRequestBody(req)
+            await logger.debug(`SignIn: recieved request body = ${body} `)
 
-            if(!body) {
-                await logger.debug('SignInPost: recieved request body is empty')
-                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-                return generateError(STATUS_CODES.BAD_REQUEST, 'Get no JSON data from POST request')
-            }
-            await logger.debug('SignInPost: recieved request body contains data')
+            if (!body) return noJSONBodyHandler(res, ERROR_MESSAGES.EMPTY_REQUEST_BODY)
 
             const user = await this.userService.findByUsername(body.username)
-            if (user) {
-                if (user.password === md5(body.password)) {
-                    await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
-                    client.sendCookie()
-                    res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
-                    return 
-                } else {
-                    res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-                    return generateError(STATUS_CODES.BAD_REQUEST, 'Incorrect password')
-                }
+            if (!user) {
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
+                return generateError(STATUS_CODES.BAD_REQUEST, ERROR_MESSAGES.NO_SUCH_USER)
             }
 
-            res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-            return generateError(STATUS_CODES.BAD_REQUEST, 'User not found')
+            if (user.password !== md5(body.password)) {
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
+                return generateError(STATUS_CODES.BAD_REQUEST, ERROR_MESSAGES.INCORRECT_PASSWORD)
+            }
+
+            await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
+            client.sendCookie()
+            res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }
@@ -86,7 +78,7 @@ class UserController {
             await Session.delete(client)
             client.sendCookie()
             res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.SIGN_IN})
-            return
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }

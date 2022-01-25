@@ -9,9 +9,9 @@ const Platform = require('../entities/platform')
 const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
-const { getRequestBody, generateError } = require('../utils/util')
+const { getRequestBody, noJSONBodyHandler: operationFailedHandler } = require('../utils/util')
 
-const { STATUS_CODES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
+const { STATUS_CODES, MIME_TYPES, LOGS_FILEPATH, ERROR_MESSAGES } = require('../config')
 
 const logger = new Logger(LOGS_FILEPATH, __filename)
 
@@ -56,9 +56,9 @@ class TaskController {
             const { res } = client
             const session = await Session.get(client)
             res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-            const result = await this.taskService.findAll(session['user_id'])
-            await logger.debug(`FindAll: ${result.length} Tasks found`)
-            return result
+            const tasks = await this.taskService.findAll(session['user_id'])
+            await logger.debug(`FindAll: ${tasks.length} Tasks found`)
+            return tasks
         } catch (error) {
             await logger.error(error.message)
         }
@@ -76,10 +76,7 @@ class TaskController {
             const successUpdate = await this.taskService.update(task)
             await logger.debug(`Update: successUpdate=${successUpdate}`)
 
-            if (!successUpdate) {
-                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-                return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t update task: task doesn`t exist or you don`t have rights to update it')
-            }
+            if (!successUpdate) return operationFailedHandler(res, ERROR_MESSAGES.CANNOT_UPDATE_TASK)
     
             const repeat = new Repeat(delta, repeatTitle, taskId)
             await this.repeatService.update(repeat)
@@ -103,10 +100,7 @@ class TaskController {
             const successDelete = await this.taskService.delete(session['user_id'], body.taskId)
             await logger.debug(`Delete: successDelete=${successDelete}`)
 
-            if (!successDelete) {
-                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-                return generateError(STATUS_CODES.BAD_REQUEST, 'Can`t delete task: task doesn`t exist or you don`t have rights to delete it')
-            }
+            if (!successDelete) return operationFailedHandler(res, ERROR_MESSAGES.CANNOT_DELETE_TASK)
 
             res.writeHead(STATUS_CODES.NO_CONTENT)
             return ''
