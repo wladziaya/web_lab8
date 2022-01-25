@@ -57,14 +57,15 @@ class UserController {
                 return generateError(STATUS_CODES.BAD_REQUEST, ERROR_MESSAGES.NO_SUCH_USER)
             }
 
-            if (user.password === md5(body.password)) {
-                await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
-                client.sendCookie()
-                res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
-                return ''
+            if (user.password !== md5(body.password)) {
+                res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
+                return generateError(STATUS_CODES.BAD_REQUEST, ERROR_MESSAGES.INCORRECT_PASSWORD)
             }
-            res.writeHead(STATUS_CODES.BAD_REQUEST, {'Content-Type': MIME_TYPES.JSON})
-            return generateError(STATUS_CODES.BAD_REQUEST, ERROR_MESSAGES.INCORRECT_PASSWORD)
+
+            await Session.start(client, {'user_id': user.id, 'start_time': new Date()})
+            client.sendCookie()
+            res.writeHead(STATUS_CODES.FOUND, {Location: ROUTES.PAGES.MAIN})
+            return ''
         } catch (error) {
             await logger.error(error.message)
         }
