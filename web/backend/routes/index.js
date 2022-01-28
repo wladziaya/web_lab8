@@ -10,7 +10,7 @@ const taskController = new TaskController()
 
 const GET_ROUTES = new Map([
     [ROUTES.PAGES.MAIN, async (client) => assetsController.getMainPage(client)],
-    [ROUTES.API.FIND_USER, async (client) => userController.findById(client)],
+    [ROUTES.API.FIND_USER, async (client) => userController.findCurrentUser(client)],
     [ROUTES.PAGES.SIGN_IN, async (client) => assetsController.getSignInPage(client)],
     [ROUTES.PAGES.SIGN_UP, async (client) => assetsController.getSignUpPage(client)],
     [ROUTES.API.FIND_TASKS, async (client) => taskController.findAll(client)],

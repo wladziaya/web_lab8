@@ -1,17 +1,17 @@
-const RepeatRepository = require('../repositories/repeat_repository')
+const RepeatGateway = require('../table_gateways/repeat_gateway')
 
 class RepeatService {
 
     constructor() {
-        this.repeatRepository = new RepeatRepository()
+        this.repeatGateway = new RepeatGateway()
     }
 
-    async create(repeat) {
-        return await this.repeatRepository.create(repeat)
+    async create(delta, title, taskId) {
+        return await this.repeatGateway.create(delta, title, taskId)
     }
 
-    async update(repeat) {
-        return await this.repeatRepository.update(repeat)
+    async update(delta, title, taskId) {
+        return await this.repeatGateway.update(delta, title, taskId)
     }
 
 }

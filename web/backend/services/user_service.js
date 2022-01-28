@@ -1,20 +1,20 @@
 const User = require('../entities/user')
-const UserRepository = require('../repositories/user_repository')
+const UserGateway = require('../table_gateways/user_gateway')
 
 class UserService {
 
     constructor() {
-        this.userRepository = new UserRepository()
+        this.userGateway = new UserGateway()
     }
 
-    async create(user) {
+    async create(firstName, lastName, username, password) {
         // todo add data validation
-        return await this.userRepository.create(user)
+        return await this.userGateway.create(firstName, lastName, username, password)
     }
 
     async findByUsername(username) {
         try {
-            const data = await this.userRepository.findByUsername(username)
+            const data = await this.userGateway.findByUsername(username)
             return new User(data['first_name'], data['last_name'], data['username'], data['password'], data['id'])
         } catch (error) {
             if (error instanceof TypeError) return
@@ -23,7 +23,7 @@ class UserService {
     }
 
     async findById(id) {
-        return await this.userRepository.findById(id)
+        return await this.userGateway.findById(id)
     }
 
 }
