@@ -223,7 +223,6 @@
                     },
                     body: JSON.stringify(editedTask)
                 });
-                const data = await response.json()
                 document.getElementById('edittask').style.display = 'none'
                 let ourtask = document.getElementById(`${id}`);
                 let infoArray = document.getElementById(`${id}`).lastElementChild.querySelectorAll('div')
