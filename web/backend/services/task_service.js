@@ -1,27 +1,25 @@
-const TaskRepository = require('../repositories/task_repository')
+const TaskGateway = require('../table_gateways/task_gateway')
 
 class TaskService {
 
     constructor() {
-        this.taskRepository = new TaskRepository()
+        this.taskGateway = new TaskGateway()
     }
 
-    async create(task) {
-        return await this.taskRepository.create(task)
+    async create(title, dttm, url, userId, statusId) {
+        return await this.taskGateway.create(title, dttm, url, userId, statusId)
     }
 
-    async findAll(userId) {
-        return await this.taskRepository.findAll(userId)
+    async findAllByUserId(userId) {
+        return await this.taskGateway.findAllByUserId(userId)
     }
 
-    async update(task) {
-        const result = await this.taskRepository.update(task)
-        return result > 0
+    async update(id, title, dttm, url, userId) {
+        return await this.taskGateway.update(id, title, dttm, url, userId)
     }
 
     async delete(userId, id) {
-        const result = await this.taskRepository.delete(userId, id)
-        return result > 0
+        return await this.taskGateway.delete(userId, id)
     }
 
 }

@@ -1,17 +1,17 @@
-const PlatformRepository = require('../repositories/platform_repository')
+const PlatformGateway = require('../table_gateways/platform_gateway')
 
 class PlatformService {
 
     constructor() {
-        this.platformRepository = new PlatformRepository()
+        this.platformGateway = new PlatformGateway()
     }
 
-    async create(platform) {
-        return await this.platformRepository.create(platform)
+    async create(title, taskId) {
+        return await this.platformGateway.create(title, taskId)
     }
 
-    async update(platform) {
-        return await this.platformRepository.update(platform)
+    async update(title, taskId) {
+        return await this.platformGateway.update(title, taskId)
     }
 }
 

@@ -2,10 +2,6 @@ const TaskService = require('../services/task_service')
 const RepeatService = require('../services/repeat_service')
 const PlatformService = require('../services/platform_service')
 
-const Task = require('../entities/task')
-const Repeat = require('../entities/repeat')
-const Platform = require('../entities/platform')
-
 const Session = require('../entities/session')
 const Logger = require('../utils/logger')
 
@@ -31,16 +27,13 @@ class TaskController {
             const { title, url, dttm, delta, repeatTitle, platformTitle } = body
             const session = await Session.get(client)
     
-            const task = new Task(undefined, title, url, dttm, session['user_id'], 1)
-            const taskId = await this.taskService.create(task)
+            const taskId = await this.taskService.create(title, dttm, url, session['user_id'], 1)
             await logger.debug('Create: Task created')
     
-            const repeat = new Repeat(delta, repeatTitle, taskId)
-            await this.repeatService.create(repeat)
+            await this.repeatService.create(delta, repeatTitle, taskId)
             await logger.debug('Create: Repeat created')
     
-            const platform = new Platform(platformTitle, taskId)
-            await this.platformService.create(platform)
+            await this.platformService.create(platformTitle, taskId)
             await logger.debug('Create: Platform created')
            
             res.writeHead(STATUS_CODES.CREATED, {'Content-Type': MIME_TYPES.JSON})
@@ -56,7 +49,7 @@ class TaskController {
             const { res } = client
             const session = await Session.get(client)
             res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON})
-            const tasks = await this.taskService.findAll(session['user_id'])
+            const tasks = await this.taskService.findAllByUserId(session['user_id'])
             await logger.debug(`FindAll: ${tasks.length} Tasks found`)
             return tasks
         } catch (error) {
@@ -72,17 +65,14 @@ class TaskController {
             const { taskId, title, url, dttm, delta, repeatTitle, platformTitle } = body
             const session = await Session.get(client)
     
-            const task = new Task(taskId, title, url, dttm, session['user_id'], 1)
-            const successUpdate = await this.taskService.update(task)
+            const successUpdate = await this.taskService.update(taskId, title, dttm, url, session['user_id'])
             await logger.debug(`Update: successUpdate=${successUpdate}`)
 
             if (!successUpdate) return operationFailedHandler(res, ERROR_MESSAGES.CANNOT_UPDATE_TASK)
     
-            const repeat = new Repeat(delta, repeatTitle, taskId)
-            await this.repeatService.update(repeat)
+            await this.repeatService.update(delta, repeatTitle, taskId)
     
-            const platform = new Platform(platformTitle, taskId)
-            await this.platformService.update(platform)
+            await this.platformService.update(platformTitle, taskId)
             
             res.writeHead(STATUS_CODES.NO_CONTENT)
             return ''

@@ -1,4 +1,4 @@
-const SessionRepository = require('../repositories/session_repository')
+const SessionRepository = require('../table_gateways/session_gateway')
 const Logger = require('../utils/logger')
 const { generateToken } = require('../utils/util')
 
@@ -85,7 +85,7 @@ class Session {
 
     static async save(token, userId, startTime) {
         try {
-            await storage.save({token, userId, startTime})
+            await storage.save(token, userId, startTime)
         } catch (error) {
             await logger.error(error.message)
         }

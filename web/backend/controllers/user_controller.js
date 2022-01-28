@@ -29,8 +29,7 @@ class UserController {
             if (!body) return noJSONBodyHandler(res, ERROR_MESSAGES.EMPTY_REQUEST_BODY)
 
             const { firstName, lastName, username, password } = body
-            const user = new User(firstName, lastName, username, md5(password))
-            const userId = await this.userService.create(user)
+            const userId = await this.userService.create(firstName, lastName, username, md5(password))
             await Session.start(client, {'user_id': userId, 'start_time': new Date()})
             client.sendCookie()
             await logger.info('Signup: Session have been created')
@@ -85,7 +84,7 @@ class UserController {
     }
 
     // GET
-    async findById(client) {
+    async findCurrentUser(client) {
         const { res } = client
         const session = await Session.get(client)
         const user = await this.userService.findById(session['user_id'])
