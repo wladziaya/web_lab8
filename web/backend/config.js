@@ -1,8 +1,8 @@
 const db = {
-    host: 'localhost',
-    user: 'root',
-    database: 'test',
-    password: 'admin'
+    host: process.env.CLEARDB_HOST || 'localhost',
+    user: process.env.CLEARDB_USER || 'root',
+    database: process.env.CLEARDB_DATABASE_NAME || 'test',
+    password: process.env.CLEARDB_PASSWORD || 'admin'
 }
 
 const STATUS_CODES = {
@@ -46,7 +46,6 @@ const ROUTES = {
         CREATE_TASK: TASK_OPERATIONS_ROUTE,
         UPDATE_TASK: TASK_OPERATIONS_ROUTE,
         DELETE_TASK: TASK_OPERATIONS_ROUTE,
-        // API_OPERATIONS_WITH_TASK: '/tasks',
     },
     GENERAL: {
         SIGN_IN: SIGN_IN_ROUTE,
