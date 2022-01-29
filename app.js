@@ -14,7 +14,7 @@ const logger = new Logger(LOGS_FILEPATH, __filename)
 
 const assetsController = new AsesstsController()
 
-const hostname = process.env.APP_HOST || '127.0.0.1'
+const hostname = '0.0.0.0'
 const port = process.env.PORT || 8000
 
 const rendering = {
