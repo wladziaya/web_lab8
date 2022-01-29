@@ -92,7 +92,7 @@
         }
 
         let getAllTasks = async () => {
-            const response = await fetch('http://localhost:8000/tasks', {
+            const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
@@ -127,7 +127,7 @@
         document.addEventListener("DOMContentLoaded", getAllTasks);
 
         let getAllUserInfo = async () => {
-            const response = await fetch('http://localhost:8000/users', {
+            const response = await fetch('https://fake-student-nodejs.herokuapp.com/users', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
@@ -164,7 +164,7 @@
 
             if (newTask.title && newTask.url && newTask.dttm && newTask.delta && newTask.repeatTitle && newTask.platformTitle) {
 
-                const response = await fetch('http://localhost:8000/tasks', {
+                const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8'
@@ -216,7 +216,7 @@
 
             if (editedTask.title && editedTask.url && editedTask.dttm && editedTask.delta && editedTask.repeatTitle && editedTask.platformTitle) {
 
-                const response = await fetch('http://localhost:8000/tasks', {
+                const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8'
@@ -242,7 +242,7 @@
                 "taskId": but.value
             }
             try {
-                const response = await fetch('http://localhost:8000/tasks', {
+                const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
@@ -261,7 +261,7 @@
 
         let signOut = async () => {
             try {
-                const response = await fetch('http://localhost:8000/users/signout', {
+                const response = await fetch('https://fake-student-nodejs.herokuapp.com/users/signout', {
                     method: 'DELETE',
                 })
                 console.log('done')

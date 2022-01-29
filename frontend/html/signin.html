@@ -23,7 +23,7 @@
 
                 <button type="submit" onclick="sign()">Sign in</button>
                 <div>
-                    <p>Don't have an account? <a href="http://localhost:8000/users/signup">Sign up</a></p>
+                    <p>Don't have an account? <a href="https://fake-student-nodejs.herokuapp.com/users/signup">Sign up</a></p>
                 </div>
 
             </div>
@@ -40,7 +40,7 @@
                 password: document.getElementById("password").value
             }
             if (user.username && user.password) {
-                const response = await fetch('http://localhost:8000/users/signin', {
+                const response = await fetch('https://fake-student-nodejs.herokuapp.com/users/signin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
