@@ -6,18 +6,17 @@ const { STATUS_CODES, MIME_TYPES, LOGS_FILEPATH } = require('../config')
 const Logger = require('../utils/logger')
 const logger = new Logger(LOGS_FILEPATH, __filename)
 
-const BACK_TO_WEB_FOLDER = '../../'
+const BACK_TO_ROOT_FOLDER = '../'
 const HTML_FOLDER = 'frontend/html'
 const NOT_FOUND_PAGE = '404.html'
 const MAIN_PAGE = 'main.html'
 const SIGN_IN_PAGE = 'signin.html'
 const SIGN_UP_PAGE = 'signup.html'
-const BASE_FOLDER = path.join(__dirname, BACK_TO_WEB_FOLDER)
 
 const getAsset = (file, assetFolder='') => {
     const filePath = assetFolder ? 
-        path.join(BASE_FOLDER, assetFolder, file) :
-        path.join(BASE_FOLDER, file)
+        path.join(assetFolder, file) :
+        path.join(__dirname, BACK_TO_ROOT_FOLDER, file)
 
     return (mimeType) => async (client) => {
         client.res.writeHead(STATUS_CODES.OK, {'Content-Type': mimeType})
