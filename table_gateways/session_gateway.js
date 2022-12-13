@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise')
+
 const { db, LOGS_FILEPATH } = require('../config')
 
 const Logger = require('../utils/logger')

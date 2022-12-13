@@ -28,8 +28,8 @@ class UserController {
 
             if (!body) return noJSONBodyHandler(res, ERROR_MESSAGES.EMPTY_REQUEST_BODY)
 
-            const { firstName, lastName, username, password } = body
-            const userId = await this.userService.create(firstName, lastName, username, md5(password))
+            const { firstName, lastName, username, password, group, variant } = body
+            const userId = await this.userService.create(firstName, lastName, username, md5(password), group, variant)
             await Session.start(client, {'user_id': userId, 'start_time': new Date()})
             client.sendCookie()
             await logger.info('Signup: Session have been created')
@@ -88,9 +88,9 @@ class UserController {
         const { res } = client
         const session = await Session.get(client)
         const user = await this.userService.findById(session['user_id'])
-        await logger.debug(`FindById: ${user['username']}, ${user['first_name']}, ${user['last_name']}`)
+        await logger.debug(`FindById: ${user['username']}, ${user['first_name']}, ${user['last_name']}, ${user['group']}, ${user['variant']}`)
         res.writeHead(STATUS_CODES.OK, {'Content-Type': MIME_TYPES.JSON}) 
-        return {'username': user['username'], 'firstName': user['first_name'], 'lastName': user['last_name']}
+        return {'username': user['username'], 'firstName': user['first_name'], 'lastName': user['last_name'], 'group': user['group'], 'variant': user['variant']}
     }
 }
 

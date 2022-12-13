@@ -7,15 +7,15 @@ class UserService {
         this.userGateway = new UserGateway()
     }
 
-    async create(firstName, lastName, username, password) {
+    async create(firstName, lastName, username, password, group, variant) {
         // todo add data validation
-        return await this.userGateway.create(firstName, lastName, username, password)
+        return await this.userGateway.create(firstName, lastName, username, password, group, variant)
     }
 
     async findByUsername(username) {
         try {
             const data = await this.userGateway.findByUsername(username)
-            return new User(data['first_name'], data['last_name'], data['username'], data['password'], data['id'])
+            return new User(data['first_name'], data['last_name'], data['username'], data['password'], data['group'], data['variant'], data['id'])
         } catch (error) {
             if (error instanceof TypeError) return
             throw new Error(error)

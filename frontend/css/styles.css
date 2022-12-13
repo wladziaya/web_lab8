@@ -88,6 +88,23 @@ button:hover {
 
 }
 
+#userInfo {
+    display: none;
+    background: #043d40;
+    position: absolute;
+    height: 500px;
+    width: 48vw;
+    border: 2px solid #11939a;
+    border-radius: 2em;
+    min-width: 300px;
+    color: #d8f9fb;
+}
+
+#userInfo h2 {
+    text-align: start;
+    margin-left: 7px;
+}
+
 #addtask, #edittask {
     background: #043d40; position: absolute; height: fit-content; width: 48vw; border: 2px solid #11939a;
     border-radius: 2em;

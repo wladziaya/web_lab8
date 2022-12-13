@@ -13,7 +13,14 @@
 
 <body>
     <header>
-        <div id='username' style="text-align: start;"> <button id='signout' onclick="signOut()">Sign out</button>
+        <div id='username' style="text-align: start;"> 
+            <button style="width:fit-content; padding: 7px; margin-left: 7px; border-radius: 15px;
+            font-family: inherit;
+            font-size: 20px;"
+            onclick="
+            document.getElementById('userInfo').style.display='grid'"> User info
+            </button>
+            <button id='signout' onclick="signOut()">Sign out</button>
         </div>
     </header>
     <main>
@@ -29,6 +36,15 @@
             </div>
 
             <div id='edittask'>
+            </div>
+
+            <div id="userInfo">
+                <div> <button id="hide" style="margin: 0; margin: 0; padding: 5px 30px 0 0;"
+                    onclick="document.getElementById('userInfo').style.display='none'">×</button>
+                    <h1>User information</h1>
+                    
+            </div>
+
             </div>
 
             <div id='addtask'>
@@ -56,10 +72,11 @@
         </div>
     </main>
     <footer>
-        <div>© 2021 Fake Student. All Rights Reserved.</div>
-        <div class="athors">Bogdan Chernykh, Vlada Yaremenko, Alex Gryshyn, Maksym Shchotkin</div>
+        <div>© 2022 Fake Student. All Rights Reserved.</div>
+        <div class="athors">Vlada Yaremenko</div>
     </footer>
     <script>
+        
         let editFunction = function (elem) {
             let divList = document.getElementById(`${elem.value}`).lastElementChild.querySelectorAll('div')
             console.log(divList);
@@ -92,7 +109,7 @@
         }
 
         let getAllTasks = async () => {
-            const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
+            const response = await fetch('http://localhost:8000/tasks', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
@@ -127,18 +144,25 @@
         document.addEventListener("DOMContentLoaded", getAllTasks);
 
         let getAllUserInfo = async () => {
-            const response = await fetch('https://fake-student-nodejs.herokuapp.com/users', {
+            const response = await fetch('http://localhost:8000/users', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
             });
             let userInfo = await response.json()
+            console.log('userInfo', userInfo)
             document.getElementById('username').firstChild.data = `Hello, ${userInfo.username}`;
+            let infoH2 = `<h2>Name: ${userInfo.firstName}</h2>
+                    <h2>Surname: ${userInfo.lastName}</h2>
+                    <h2>Group: ${userInfo.group}</h2>
+                    <h2>Variant: ${userInfo.variant}</h2>`
+            document.getElementById('userInfo').innerHTML += infoH2
+
+            return userInfo
         }
 
         document.addEventListener("DOMContentLoaded", getAllUserInfo);
-
 
         let buttonToggle = function (button) {
             if (button.innerHTML == '▼') {
@@ -164,7 +188,7 @@
 
             if (newTask.title && newTask.url && newTask.dttm && newTask.delta && newTask.repeatTitle && newTask.platformTitle) {
 
-                const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
+                const response = await fetch('http://localhost:8000/tasks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8'
@@ -216,7 +240,7 @@
 
             if (editedTask.title && editedTask.url && editedTask.dttm && editedTask.delta && editedTask.repeatTitle && editedTask.platformTitle) {
 
-                const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
+                const response = await fetch('http://localhost:8000/tasks', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8'
@@ -242,7 +266,7 @@
                 "taskId": but.value
             }
             try {
-                const response = await fetch('https://fake-student-nodejs.herokuapp.com/tasks', {
+                const response = await fetch('http://localhost:8000/tasks', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
@@ -261,7 +285,7 @@
 
         let signOut = async () => {
             try {
-                const response = await fetch('https://fake-student-nodejs.herokuapp.com/users/signout', {
+                const response = await fetch('http://localhost:8000/users/signout', {
                     method: 'DELETE',
                 })
                 console.log('done')

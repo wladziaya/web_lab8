@@ -2,7 +2,7 @@ const db = {
     host: process.env.CLEARDB_HOST || 'localhost',
     user: process.env.CLEARDB_USER || 'root',
     database: process.env.CLEARDB_DATABASE_NAME || 'test',
-    password: process.env.CLEARDB_PASSWORD || 'admin'
+    password: process.env.CLEARDB_PASSWORD || 'йгощкшьщ'
 }
 
 const STATUS_CODES = {
